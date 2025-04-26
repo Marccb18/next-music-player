@@ -4,19 +4,11 @@ import toJSON from './plugins/toJSON';
 
 const objectId = mongoose.Schema.Types.ObjectId;
 
-const releaseSchema = new mongoose.Schema(
+const playlistSchema = new mongoose.Schema(
   {
-    group: { type: objectId, ref: 'Groups' },
     name: { type: String, required: true },
     cover: { type: String, required: false },
-    tracks: { type: [objectId], ref: 'Tracks' },
-    releaseDate: { type: Date, required: false },
-    type: {
-      type: String,
-      default: '',
-      trim: true,
-      enum: ['album', 'single', 'ep', '', null],
-    },
+    songs: { type: [objectId], ref: 'Tracks' },
     _createdAt: { type: Date, default: Date.now },
     _updatedAt: { type: Date, default: Date.now },
   },
@@ -30,6 +22,6 @@ const releaseSchema = new mongoose.Schema(
   }
 );
 
-releaseSchema.plugin(toJSON);
+playlistSchema.plugin(toJSON);
 
-export const Release = mongoose.models.Release || mongoose.model('Release', releaseSchema);
+export const Playlist = mongoose.models.Playlist || mongoose.model('Playlist', playlistSchema);

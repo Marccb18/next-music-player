@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 let isConnected = false;
 
@@ -8,9 +8,7 @@ export const connectMongo = async () => {
   }
 
   if (!process.env.MONGODB_URI) {
-    throw new Error(
-      'Add the MONGODB_URI environment variable inside .env.local to use mongoose',
-    );
+    throw new Error('Add the MONGODB_URI environment variable inside .env.local to use mongoose');
   }
 
   try {
@@ -28,3 +26,5 @@ export const connectMongo = async () => {
 };
 
 export default connectMongo;
+export * from './models/Users';
+export * from './models/Groups';
