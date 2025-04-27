@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+export * from './models/Users';
+export * from './models/Groups';
 
 let isConnected = false;
 
@@ -26,5 +28,3 @@ export const connectMongo = async () => {
 };
 
 export default connectMongo;
-export * from './models/Users';
-export * from './models/Groups';
