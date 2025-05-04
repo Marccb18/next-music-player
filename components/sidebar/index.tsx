@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
+import { Calendar, Home, Inbox, Search, Settings, Upload } from 'lucide-react';
 
 import {
   Sidebar,
@@ -11,10 +11,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '@/components/primitives/sidebar';
 
 import { AppSidebarFooter } from './footer';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 // Menu items.
 const items = [
@@ -46,7 +46,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { user } = useAuth();
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -64,6 +64,16 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {user?.role === 'admin' && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <a href="/upload" className='flex items-center flex-nowrap text-ellipsis'>
+                      <Upload />
+                      Upload
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
