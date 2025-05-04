@@ -1,12 +1,12 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Headphones, Link } from 'lucide-react';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useRouter } from 'next/navigation';
-
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Headphones, Link } from 'lucide-react';
 
 import { Button } from '@/components/primitives/button';
 import {
@@ -21,12 +21,16 @@ import { Checkbox } from '@/components/primitives/checkbox';
 import { Input } from '@/components/primitives/input';
 import { Label } from '@/components/primitives/label';
 import { Separator } from '@/components/primitives/separator';
+
+import { useUserStore } from '@/lib/client-only/store/userStore';
 import { login } from '@/lib/server-only/users/users.actions';
 import { type LoginFormData, loginSchema } from '@/lib/validations/auth.schema';
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { setUser, setLoading, setError: setStoreError } = useUserStore();
+
   const {
     register,
     handleSubmit,
@@ -37,21 +41,32 @@ export function LoginForm() {
 
   async function onSubmit(data: LoginFormData) {
     setError(null);
+    setStoreError(null);
+    setLoading(true);
+
     try {
       const formData = new FormData();
       formData.append('email', data.email);
       formData.append('password', data.password);
       const result = await login(formData);
-      
+
       if (!result.success) {
         setError(result.error || 'Error desconocido');
+        setStoreError(result.error || 'Error desconocido');
         return;
       }
-      
+
+      // Actualizamos el store con los datos del usuario
+      setUser(result.user);
+
       router.refresh();
       router.push('/');
     } catch (err) {
-      setError('Ocurrió un error al iniciar sesión');
+      const errorMessage = 'Ocurrió un error al iniciar sesión';
+      setError(errorMessage);
+      setStoreError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   }
 

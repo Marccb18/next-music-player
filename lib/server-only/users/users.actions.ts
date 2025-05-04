@@ -25,7 +25,7 @@ export async function login(formData: FormData) {
       maxAge: 60 * 60 * 24 * 7, // 1 semana
     });
 
-    return { success: true };
+    return { success: true, user };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }

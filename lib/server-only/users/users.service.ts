@@ -2,6 +2,9 @@
 
 import bcrypt from 'bcryptjs';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 import { connectMongo } from '@/lib/mongo';
 import { User } from '@/lib/mongo/models/Users';
 
@@ -23,7 +26,7 @@ export async function loginUser(email: string, password: string) {
     const { password: _, _createdAt, _updatedAt, ...userWithoutPassword } = user.toJSON();
     return {
       ...userWithoutPassword,
-      _id: user._id.toString()
+      _id: user._id.toString(),
     };
   } catch (error) {
     console.error('Error en login:', error);
@@ -67,4 +70,9 @@ export async function registerUser(name: string, email: string, password: string
     console.error('Error en registro:', error);
     throw error;
   }
+}
+
+export async function logout() {
+  cookies().delete('user_id');
+  redirect('/login');
 }

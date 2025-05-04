@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SidebarProvider } from "@/components/primitives/sidebar";
+
+import { SidebarProvider } from '@/components/primitives/sidebar';
 import { AppSidebar } from '@/components/sidebar/index';
 
 export default function AuthorizedLayout({ children }: { children: React.ReactNode }) {
@@ -13,9 +14,7 @@ export default function AuthorizedLayout({ children }: { children: React.ReactNo
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
     </SidebarProvider>
   );
 }

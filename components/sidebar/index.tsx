@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
 
 import {
   Sidebar,
@@ -9,36 +9,38 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/primitives/sidebar"
+} from '@/components/primitives/sidebar';
+
+import { AppSidebarFooter } from './footer';
 
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: 'Home',
+    url: '#',
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
+    title: 'Inbox',
+    url: '#',
     icon: Inbox,
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: 'Calendar',
+    url: '#',
     icon: Calendar,
   },
   {
-    title: "Search",
-    url: "#",
+    title: 'Search',
+    url: '#',
     icon: Search,
   },
   {
-    title: "Settings",
-    url: "#",
+    title: 'Settings',
+    url: '#',
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -62,6 +64,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <AppSidebarFooter />
     </Sidebar>
-  )
+  );
 }

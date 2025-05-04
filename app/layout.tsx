@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+
 import { SidebarProvider, SidebarTrigger } from '@/components/primitives/sidebar';
 
 import './globals.css';

@@ -1,11 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useRouter } from 'next/navigation';
-
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/primitives/button';
 import {
@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from '@/components/primitives/card';
 import { Input } from '@/components/primitives/input';
+
 import { register as registerAction } from '@/lib/server-only/users/users.actions';
 import { type RegisterFormData, registerSchema } from '@/lib/validations/auth.schema';
 

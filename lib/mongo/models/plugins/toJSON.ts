@@ -4,7 +4,7 @@
  *  - removes __v, createdAt, updatedAt, and any path that has private: true
  *  - replaces _id with id
  */
-import { Document, Schema } from 'mongoose';
+import { Document, Schema, isValidObjectId } from 'mongoose';
 
 const deleteAtPath = (obj: any, path: string[], index: number) => {
   if (index === path.length - 1) {
@@ -23,7 +23,7 @@ const toJSON = <T extends Document>(schema: Schema<T>) => {
         }
       });
 
-      if (ret._id) {
+      if (ret._id && isValidObjectId(ret._id)) {
         ret.id = ret._id.toString();
       }
       //delete empty objects

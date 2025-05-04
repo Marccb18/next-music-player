@@ -9,10 +9,11 @@
   "printWidth": 100,
   "arrowParens": "always",
   "importOrder": [
-    "^(react)",
-    "^(next)",
-    "<THIRD_PARTY_MODULES>",
-    "^@/",
+    "^react",
+    "^next",
+    "^@/components/(.*)$",
+    "^@/lib/(.*)$",
+    "^@/styles/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,
