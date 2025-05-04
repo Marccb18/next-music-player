@@ -1,10 +1,11 @@
 import { cookies } from 'next/headers';
-import { User } from '@/lib/mongo/models/Users';
+
 import { connectMongo } from '@/lib/mongo';
+import { User } from '@/lib/mongo/models/Users';
 
 export default async function HomePage() {
   const userCookie = cookies().get('user_id');
-  
+
   if (!userCookie) {
     return null;
   }
@@ -32,4 +33,4 @@ export default async function HomePage() {
       </div>
     </div>
   );
-} 
+}

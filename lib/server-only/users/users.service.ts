@@ -1,13 +1,14 @@
 'use server';
 
-import { User } from '@/lib/mongo/models/Users';
-import { connectMongo } from '@/lib/mongo';
 import bcrypt from 'bcryptjs';
+
+import { connectMongo } from '@/lib/mongo';
+import { User } from '@/lib/mongo/models/Users';
 
 export async function loginUser(email: string, password: string) {
   try {
     await connectMongo();
-    
+
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error('Usuario no encontrado');
@@ -57,7 +58,7 @@ export async function registerUser(name: string, email: string, password: string
     const { password: _, _createdAt, _updatedAt, ...userWithoutPassword } = user.toJSON();
     return {
       ...userWithoutPassword,
-      _id: user._id.toString()
+      _id: user._id.toString(),
     };
   } catch (error) {
     console.error('Error en registro:', error);

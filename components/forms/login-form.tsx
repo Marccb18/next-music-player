@@ -1,18 +1,28 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginFormData } from '@/lib/validations/auth.schema';
-import { login } from '@/lib/server-only/users/users.actions';
 import { useState } from 'react';
-import { Input } from '@/components/primitives/input';
-import { Button } from '@/components/primitives/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/primitives/card';
-import { Headphones, Link } from 'lucide-react';
-import { Separator } from '@/components/primitives/separator';
-import { Label } from '@/components/primitives/label';
-import { Checkbox } from '@/components/primitives/checkbox';
+import { useForm } from 'react-hook-form';
+
 import { useRouter } from 'next/navigation';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Headphones, Link } from 'lucide-react';
+
+import { Button } from '@/components/primitives/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/primitives/card';
+import { Checkbox } from '@/components/primitives/checkbox';
+import { Input } from '@/components/primitives/input';
+import { Label } from '@/components/primitives/label';
+import { Separator } from '@/components/primitives/separator';
+import { login } from '@/lib/server-only/users/users.actions';
+import { type LoginFormData, loginSchema } from '@/lib/validations/auth.schema';
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -50,41 +60,40 @@ export function LoginForm() {
             <Headphones className="h-6 w-6 text-primary" />
           </div>
           <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
-          <CardDescription>
-            Ingresa tus credenciales para acceder a tu cuenta
-          </CardDescription>
+          <CardDescription>Ingresa tus credenciales para acceder a tu cuenta</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
-              <Input id="email" type="email" placeholder="ejemplo@correo.com" {...register('email')} />
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
+              <Input
+                id="email"
+                type="email"
+                placeholder="ejemplo@correo.com"
+                {...register('email')}
+              />
+              {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Contraseña</Label>
-                <Link 
-                  href="/recuperar-password" 
+                <Link
+                  href="/recuperar-password"
                   className="text-xs text-muted-foreground hover:text-primary"
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
               <Input id="password" type="password" {...register('password')} />
-              {errors.password && (
-                <p className="text-xs text-red-500">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox id="remember" />
-              <Label htmlFor="remember" className="text-sm">Recordar sesión</Label>
+              <Label htmlFor="remember" className="text-sm">
+                Recordar sesión
+              </Label>
             </div>
-            {error && (
-              <div className="text-sm text-red-500 text-center">{error}</div>
-            )}
+            {error && <div className="text-sm text-red-500 text-center">{error}</div>}
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? 'Iniciando...' : 'Iniciar sesión'}
             </Button>
@@ -95,14 +104,18 @@ export function LoginForm() {
               </span>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" type="button">Google</Button>
-              <Button variant="outline" type="button">Apple</Button>
+              <Button variant="outline" type="button">
+                Google
+              </Button>
+              <Button variant="outline" type="button">
+                Apple
+              </Button>
             </div>
           </CardContent>
         </form>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            ¿No tienes una cuenta?{" "}
+            ¿No tienes una cuenta?{' '}
             <Link href="/registro" className="font-medium text-primary hover:underline">
               Regístrate
             </Link>
@@ -111,4 +124,4 @@ export function LoginForm() {
       </Card>
     </div>
   );
-} 
+}

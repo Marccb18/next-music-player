@@ -1,14 +1,23 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, type RegisterFormData } from '@/lib/validations/auth.schema';
-import { register as registerAction } from '@/lib/server-only/users/users.actions';
 import { useState } from 'react';
-import { Input } from '@/components/primitives/input';
-import { Button } from '@/components/primitives/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/primitives/card';
+import { useForm } from 'react-hook-form';
+
 import { useRouter } from 'next/navigation';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '@/components/primitives/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/primitives/card';
+import { Input } from '@/components/primitives/input';
+import { register as registerAction } from '@/lib/server-only/users/users.actions';
+import { type RegisterFormData, registerSchema } from '@/lib/validations/auth.schema';
 
 export function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +36,7 @@ export function RegisterForm() {
       formData.append('name', data.name);
       formData.append('email', data.email);
       formData.append('password', data.password);
-      
+
       const result = await registerAction(formData);
       if (!result.success) {
         setError(result.error);
@@ -50,31 +59,15 @@ export function RegisterForm() {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {error && (
-            <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
-              {error}
-            </div>
+            <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{error}</div>
           )}
           <div className="space-y-2">
-            <Input
-              id="name"
-              type="text"
-              placeholder="Nombre"
-              {...register('name')}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
-            )}
+            <Input id="name" type="text" placeholder="Nombre" {...register('name')} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
           <div className="space-y-2">
-            <Input
-              id="email"
-              type="email"
-              placeholder="Email"
-              {...register('email')}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
+            <Input id="email" type="email" placeholder="Email" {...register('email')} />
+            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
             <Input
@@ -87,15 +80,11 @@ export function RegisterForm() {
               <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full"
-          >
+          <Button type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? 'Registrando...' : 'Registrarse'}
           </Button>
         </form>
       </CardContent>
     </Card>
   );
-} 
+}

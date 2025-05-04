@@ -1,8 +1,9 @@
 'use server';
 
-import { loginUser, registerUser } from './users.service';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import { loginUser, registerUser } from './users.service';
 
 export async function login(formData: FormData) {
   try {
@@ -10,14 +11,14 @@ export async function login(formData: FormData) {
     const password = formData.get('password') as string;
 
     const user = await loginUser(email, password);
-    
+
     // Aquí podrías generar un token JWT o usar sesiones
     // Por simplicidad, guardaremos el ID del usuario en una cookie
     cookies().set('user_id', user._id.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 1 semana
+      maxAge: 60 * 60 * 24 * 7, // 1 semana
     });
 
     redirect('/');
@@ -33,12 +34,12 @@ export async function register(formData: FormData) {
     const password = formData.get('password') as string;
 
     const user = await registerUser(name, email, password);
-    
+
     cookies().set('user_id', user._id.toString(), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 1 semana
+      maxAge: 60 * 60 * 24 * 7, // 1 semana
     });
 
     return { success: true };
@@ -50,4 +51,4 @@ export async function register(formData: FormData) {
 export async function logout() {
   cookies().delete('user_id');
   redirect('/login');
-} 
+}

@@ -1,4 +1,4 @@
-import { Music, Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import { Music, Pause, Play, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -6,4 +6,4 @@ export default function Home() {
       Si ves este fondo rojo, Tailwind está funcionando.
     </div>
   );
-} 
+}

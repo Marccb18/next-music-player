@@ -1,13 +1,9 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export default function AuthorizedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthorizedLayout({ children }: { children: React.ReactNode }) {
   const userCookie = cookies().get('user_id');
-  
+
   if (!userCookie) {
     redirect('/login');
   }
@@ -35,9 +31,7 @@ export default function AuthorizedLayout({
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {children}
-      </main>
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
     </div>
   );
-} 
+}
