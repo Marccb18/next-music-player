@@ -45,8 +45,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-react:
-        specifier: ^0.503.0
-        version: 0.503.0(react@18.3.1)
+        specifier: ^0.507.0
+        version: 0.507.0(react@18.3.1)
       mongodb:
         specifier: ^6.16.0
         version: 6.16.0
@@ -83,6 +83,9 @@ importers:
       zod:
         specifier: ^3.24.3
         version: 3.24.3
+      zustand:
+        specifier: ^5.0.4
+        version: 5.0.4(@types/react@18.3.20)(react@18.3.1)
     devDependencies:
       '@types/node':
         specifier: ^20.11.0
@@ -1622,8 +1625,8 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lucide-react@0.503.0:
-    resolution: {integrity: sha512-HGGkdlPWQ0vTF8jJ5TdIqhQXZi6uh3LnNgfZ8MHiuxFfX3RZeA79r2MW2tHAZKlAVfoNE8esm3p+O6VkIvpj6w==}
+  lucide-react@0.507.0:
+    resolution: {integrity: sha512-XfgE6gvAHwAtnbUvWiTTHx4S3VGR+cUJHEc0vrh9Ogu672I1Tue2+Cp/8JJqpytgcBHAB1FVI297W4XGNwc2dQ==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -2354,6 +2357,24 @@ packages:
 
   zod@3.24.3:
     resolution: {integrity: sha512-HhY1oqzWCQWuUqvBFnsyrtZRhyPeR7SUGv+C4+MsisMuVfSPx8HpwWqH8tRahSlt6M3PiFAcoeFhZAqIXTxoSg==}
+
+  zustand@5.0.4:
+    resolution: {integrity: sha512-39VFTN5InDtMd28ZhjLyuTnlytDr9HfwO512Ai4I8ZABCoyAj4F1+sr7sD1jP/+p7k77Iko0Pb5NhgBFDCX0kQ==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
 
 snapshots:
 
@@ -3978,7 +3999,7 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lucide-react@0.503.0(react@18.3.1):
+  lucide-react@0.507.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -4794,3 +4815,8 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.24.3: {}
+
+  zustand@5.0.4(@types/react@18.3.20)(react@18.3.1):
+    optionalDependencies:
+      '@types/react': 18.3.20
+      react: 18.3.1

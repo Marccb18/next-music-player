@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger } from "@/components/primitives/sidebar";
-import { Home, Library, Settings } from "lucide-react";
+import { SidebarProvider } from "@/components/primitives/sidebar";
 import { AppSidebar } from '@/components/sidebar/index';
 
 export default function AuthorizedLayout({ children }: { children: React.ReactNode }) {
