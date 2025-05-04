@@ -5,6 +5,7 @@ export function middleware(request: NextRequest) {
   const userCookie = request.cookies.get('user_id');
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
                     request.nextUrl.pathname.startsWith('/register');
+  const isAuthorizedPage = request.nextUrl.pathname.startsWith('/(authorized)');
 
   if (!userCookie && !isAuthPage) {
     return NextResponse.redirect(new URL('/login', request.url));
@@ -12,6 +13,10 @@ export function middleware(request: NextRequest) {
 
   if (userCookie && isAuthPage) {
     return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  if (!userCookie && isAuthorizedPage) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();

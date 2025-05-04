@@ -20,7 +20,7 @@ export async function login(formData: FormData) {
       maxAge: 60 * 60 * 24 * 7 // 1 semana
     });
 
-    return { success: true };
+    redirect('/');
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }
@@ -32,7 +32,15 @@ export async function register(formData: FormData) {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    await registerUser(name, email, password);
+    const user = await registerUser(name, email, password);
+    
+    cookies().set('user_id', user._id.toString(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7 // 1 semana
+    });
+
     return { success: true };
   } catch (error) {
     return { success: false, error: (error as Error).message };
