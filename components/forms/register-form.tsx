@@ -40,7 +40,7 @@ export function RegisterForm() {
 
       const result = await registerAction(formData);
       if (!result.success) {
-        setError(result.error);
+        setError(result.error || 'Error desconocido');
       } else {
         router.push('/');
       }
