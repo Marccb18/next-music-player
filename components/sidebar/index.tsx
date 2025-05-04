@@ -40,7 +40,7 @@ const items = [
     url: '#',
     icon: Settings,
   },
-];
+]; 
 
 export function AppSidebar() {
   return (
