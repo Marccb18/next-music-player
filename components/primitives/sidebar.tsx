@@ -42,6 +42,8 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  isDropdownOpen: boolean;
+  setIsDropdownOpen: (open: boolean) => void;
 };
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
@@ -77,6 +79,7 @@ const SidebarProvider = React.forwardRef<
   ) => {
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -128,8 +131,10 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        isDropdownOpen,
+        setIsDropdownOpen,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, isDropdownOpen]
     );
 
     return (
@@ -178,7 +183,7 @@ const Sidebar = React.forwardRef<
     },
     ref
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile, setOpen } = useSidebar();
+    const { isMobile, state, openMobile, setOpenMobile, setOpen, isDropdownOpen } = useSidebar();
 
     if (collapsible === 'none') {
       return (
@@ -228,7 +233,11 @@ const Sidebar = React.forwardRef<
         data-variant={variant}
         data-side={side}
         onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
+        onMouseLeave={() => {
+          if (!isDropdownOpen) {
+            setOpen(false);
+          }
+        }}
       >
         {/* This is what handles the sidebar gap on desktop */}
         <div

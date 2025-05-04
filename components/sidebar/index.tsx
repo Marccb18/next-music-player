@@ -1,3 +1,5 @@
+'use client';
+
 import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
 
 import {
@@ -9,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/primitives/sidebar';
 
 import { AppSidebarFooter } from './footer';
@@ -40,11 +43,12 @@ const items = [
     url: '#',
     icon: Settings,
   },
-]; 
+];
 
 export function AppSidebar() {
+  const { state } = useSidebar();
   return (
-    <Sidebar collapsible="icon" variant="sidebar">
+    <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Music Player</SidebarGroupLabel>

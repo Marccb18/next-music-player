@@ -22,7 +22,6 @@ const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
 >(({ className, src, ...props }, ref) => {
-  console.log('AvatarImage props:', { src, className });
   return (
     <AvatarPrimitive.Image
       ref={ref}
