@@ -21,7 +21,10 @@ export async function loginUser(email: string, password: string) {
 
     // Eliminamos la contraseña y campos sensibles del objeto antes de devolverlo
     const { password: _, _createdAt, _updatedAt, ...userWithoutPassword } = user.toJSON();
-    return userWithoutPassword;
+    return {
+      ...userWithoutPassword,
+      _id: user._id.toString()
+    };
   } catch (error) {
     console.error('Error en login:', error);
     throw error;

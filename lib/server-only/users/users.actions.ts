@@ -12,6 +12,10 @@ export async function login(formData: FormData) {
 
     const user = await loginUser(email, password);
 
+    if (!user || !user._id) {
+      return { success: false, error: 'Usuario no encontrado' };
+    }
+
     // Aquí podrías generar un token JWT o usar sesiones
     // Por simplicidad, guardaremos el ID del usuario en una cookie
     cookies().set('user_id', user._id.toString(), {
@@ -21,7 +25,7 @@ export async function login(formData: FormData) {
       maxAge: 60 * 60 * 24 * 7, // 1 semana
     });
 
-    redirect('/');
+    return { success: true };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }

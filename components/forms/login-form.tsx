@@ -42,11 +42,14 @@ export function LoginForm() {
       formData.append('email', data.email);
       formData.append('password', data.password);
       const result = await login(formData);
-      if (!result || !result.success) {
-        setError(result?.error || 'Error desconocido');
-      } else {
-        router.push('/');
+      
+      if (!result.success) {
+        setError(result.error || 'Error desconocido');
+        return;
       }
+      
+      router.refresh();
+      router.push('/');
     } catch (err) {
       setError('Ocurrió un error al iniciar sesión');
     }
