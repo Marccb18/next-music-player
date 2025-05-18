@@ -12,6 +12,8 @@
     "d": "bun f && bun dev"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.806.0",
+    "@aws-sdk/s3-request-presigner": "^3.806.0",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-avatar": "^1.1.7",
     "@radix-ui/react-checkbox": "^1.2.3",

@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import { connectMongo } from '@/lib/mongo';
 import { User } from '@/lib/mongo/models/Users';
 
+import AudioUploader from '@/components/audio-uploader';
+
 export default async function HomePage() {
   const userCookie = cookies().get('user_id');
 
@@ -35,6 +37,7 @@ export default async function HomePage() {
           <h3 className="text-lg font-medium text-purple-900 mb-2">Actividad Reciente</h3>
           <p className="text-purple-700">Próximamente...</p>
         </div>
+        <AudioUploader />
       </div>
     </div>
   );
