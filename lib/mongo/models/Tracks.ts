@@ -8,49 +8,22 @@ const trackSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     group: { type: objectId, ref: 'Groups' },
-    audioFile: {
-      type: {
-        url: {
-          type: String,
-          trim: true,
-          // required: true,
-        },
-        metadata: {
-          name: {
-            type: String,
-            trim: true,
-            // required: true,
-          },
-          type: {
-            type: String,
-            trim: true,
-          },
-          size: {
-            type: Number,
-            trim: true,
-          },
-        },
-        bucketRef: {
-          type: String,
-          trim: true,
-          private: true,
-        },
-      },
-      // select: false,
-      _id: false,
+    image: { type: String, required: false },
+    url: { type: String, required: true },
+    release: {
+      type: objectId,
+      ref: 'Release',
     },
-    releases: [
-      {
-        type: objectId,
-        ref: 'Release',
-      },
-    ],
     collaborators: [
       {
         type: objectId,
         ref: 'Groups',
       },
     ],
+    duration: { type: Number, required: true },
+    genre: [{ type: objectId, ref: 'Genres' }],
+    trackNumber: { type: Number },
+    isExplicit: { type: Boolean, default: false },
     _createdAt: { type: Date, default: Date.now },
     _updatedAt: { type: Date, default: Date.now },
   },

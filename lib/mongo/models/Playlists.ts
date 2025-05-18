@@ -7,8 +7,17 @@ const objectId = mongoose.Schema.Types.ObjectId;
 const playlistSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    description: { type: String },
     cover: { type: String, required: false },
-    songs: { type: [objectId], ref: 'Tracks' },
+    owner: { type: objectId, ref: 'Users', required: true },
+    isPublic: { type: Boolean, default: true },
+    songs: [
+      {
+        track: { type: objectId, ref: 'Tracks' },
+        position: { type: Number },
+        addedAt: { type: Date, default: Date.now }
+      }
+    ],
     _createdAt: { type: Date, default: Date.now },
     _updatedAt: { type: Date, default: Date.now },
   },
