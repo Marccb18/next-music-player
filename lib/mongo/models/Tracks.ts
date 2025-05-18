@@ -6,25 +6,19 @@ const objectId = mongoose.Schema.Types.ObjectId;
 
 const trackSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    group: { type: objectId, ref: 'Groups' },
-    image: { type: String, required: false },
+    name: { type: String, required: true },
+    group: { type: objectId, ref: 'Groups', required: true },
+    collaborators: [{ type: objectId, ref: 'Groups' }],
+    album: { type: objectId, ref: 'Releases' },
+    image: { type: String },
     url: { type: String, required: true },
-    spotifyId: { type: String, required: true, message: 'Spotify ID is required' },
-    release: {
-      type: objectId,
-      ref: 'Release',
-    },
-    collaborators: [
-      {
-        type: objectId,
-        ref: 'Groups',
-      },
-    ],
     duration: { type: Number, required: true },
-    genre: [{ type: objectId, ref: 'Genres' }],
-    trackNumber: { type: Number },
+    spotifyId: { type: String, required: true },
+    trackNumber: { type: Number, required: true },
     isExplicit: { type: Boolean, default: false },
+    audioUrl: { type: String, required: true },
+    fileName: { type: String, required: true },
+    genre: [{ type: objectId, ref: 'Genres' }],
     _createdAt: { type: Date, default: Date.now },
     _updatedAt: { type: Date, default: Date.now },
   },
@@ -40,4 +34,4 @@ const trackSchema = new mongoose.Schema(
 
 trackSchema.plugin(toJSON);
 
-export const Track = mongoose.models.Track || mongoose.model('Track', trackSchema);
+export const Tracks = mongoose.models.Tracks || mongoose.model('Tracks', trackSchema);

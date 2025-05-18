@@ -1,3 +1,5 @@
+import { Toaster } from 'sonner';
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
@@ -16,7 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background antialiased`}>
-        <SidebarProvider>{children}</SidebarProvider>
+        <SidebarProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+        </SidebarProvider>
       </body>
     </html>
   );

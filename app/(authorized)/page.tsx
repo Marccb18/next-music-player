@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import AudioUploader from '@/components/audio-uploader';
+import AudioUploader from '@/components/upload-song-process/audio-uploader';
 
 import { connectMongo } from '@/lib/mongo';
 import { User } from '@/lib/mongo/models/Users';

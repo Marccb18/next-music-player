@@ -15,8 +15,8 @@ const playlistSchema = new mongoose.Schema(
       {
         track: { type: objectId, ref: 'Tracks' },
         position: { type: Number },
-        addedAt: { type: Date, default: Date.now }
-      }
+        addedAt: { type: Date, default: Date.now },
+      },
     ],
     _createdAt: { type: Date, default: Date.now },
     _updatedAt: { type: Date, default: Date.now },

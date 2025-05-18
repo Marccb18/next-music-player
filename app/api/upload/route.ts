@@ -1,31 +1,13 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 
 import { NextResponse } from 'next/server';
 
-// Validar que las variables de entorno necesarias estén presentes
+import { s3Client } from '@/lib/server-only/aws/s3';
+
 const requiredEnvVars = {
-  region: process.env.NEXT_PRIVATE_AWS_REGION,
-  accessKeyId: process.env.NEXT_PRIVATE_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.NEXT_PRIVATE_AWS_SECRET_ACCESS_KEY,
-  bucketName: process.env.NEXT_PRIVATE_AWS_BUCKET_NAME,
+  bucketName: process.env.AWS_S3_BUCKET_NAME,
+  region: process.env.AWS_REGION,
 };
-
-// Verificar que todas las variables de entorno estén definidas
-const missingVars = Object.entries(requiredEnvVars)
-  .filter(([_, value]) => !value)
-  .map(([key]) => key);
-
-if (missingVars.length > 0) {
-  console.error('Variables de entorno faltantes:', missingVars.join(', '));
-}
-
-const s3Client = new S3Client({
-  region: requiredEnvVars.region,
-  credentials: {
-    accessKeyId: requiredEnvVars.accessKeyId!,
-    secretAccessKey: requiredEnvVars.secretAccessKey!,
-  },
-});
 
 export async function POST(request: Request) {
   try {
@@ -49,6 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Configuración de AWS incompleta' }, { status: 500 });
     }
 
+    // Subir archivo a S3
     const fileBuffer = await file.arrayBuffer();
     const command = new PutObjectCommand({
       Bucket: requiredEnvVars.bucketName,
@@ -65,33 +48,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       url: fileUrl,
+      fileName,
       message: 'Archivo subido exitosamente',
     });
   } catch (error) {
-    console.error('Error en la subida:', error);
-
-    // Manejo específico de errores
-    if (error instanceof Error) {
-      if (error.name === 'AccessDenied') {
-        return NextResponse.json(
-          { error: 'No tienes permisos para subir archivos' },
-          { status: 403 }
-        );
-      }
-      if (error.name === 'NoSuchBucket') {
-        return NextResponse.json({ error: 'El bucket de S3 no existe' }, { status: 404 });
-      }
-      if (error.name === 'AccessControlListNotSupported') {
-        return NextResponse.json(
-          {
-            error:
-              'El bucket no soporta ACLs. Por favor, configura los permisos del bucket correctamente.',
-          },
-          { status: 400 }
-        );
-      }
-    }
-
+    console.error('Error al subir el archivo:', error);
     return NextResponse.json({ error: 'Error al subir el archivo' }, { status: 500 });
   }
 }

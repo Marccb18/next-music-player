@@ -3,7 +3,6 @@
 import axios from 'axios';
 
 import { SpotifySearchResponse, SpotifyTrack } from './spotify.types';
-import { mapSpotifyTrack } from './spotify.mapper';
 
 const SPOTIFY_CLIENT_ID = process.env.NEXT_PRIVATE_SPOTIFY_CLIENT_ID!;
 const SPOTIFY_CLIENT_SECRET = process.env.NEXT_PRIVATE_SPOTIFY_CLIENT_SECRET!;
@@ -24,7 +23,7 @@ async function getAccessToken(): Promise<string> {
   return response.data.access_token;
 }
 
-async function searchSpotify(titulo: string, artista: string): Promise<SpotifyTrack[] | null> {
+async function searchSpotifySong(titulo: string, artista: string): Promise<SpotifyTrack[] | null> {
   try {
     const token = await getAccessToken();
 
@@ -41,13 +40,11 @@ async function searchSpotify(titulo: string, artista: string): Promise<SpotifyTr
       },
     });
 
-    const tracks = response.data.tracks.items.map(mapSpotifyTrack);
-
-    return JSON.parse(JSON.stringify(tracks));
+    return response.data.tracks.items;
   } catch (error) {
     console.error('Error en la búsqueda exacta de Spotify:', error);
     return null;
   }
 }
 
-export { searchSpotify };
+export { searchSpotifySong };
