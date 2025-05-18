@@ -41,7 +41,11 @@ export default function AudioUploader() {
       const data = await response.json();
       setUploadedUrl(data.url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al subir el archivo. Por favor, inténtalo de nuevo.');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Error al subir el archivo. Por favor, inténtalo de nuevo.'
+      );
       console.error(err);
     } finally {
       setIsUploading(false);

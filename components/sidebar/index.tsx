@@ -21,7 +21,7 @@ import { AppSidebarFooter } from './footer';
 const items = [
   {
     title: 'Home',
-    url: '#',
+    url: '/',
     icon: Home,
   },
   {
