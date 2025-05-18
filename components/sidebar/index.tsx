@@ -13,8 +13,9 @@ import {
   SidebarMenuItem,
 } from '@/components/primitives/sidebar';
 
-import { AppSidebarFooter } from './footer';
 import { useAuth } from '@/lib/hooks/useAuth';
+
+import { AppSidebarFooter } from './footer';
 
 // Menu items.
 const items = [
@@ -67,7 +68,7 @@ export function AppSidebar() {
               {user?.role === 'admin' && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <a href="/upload" className='flex items-center flex-nowrap text-ellipsis'>
+                    <a href="/upload" className="flex items-center flex-nowrap text-ellipsis">
                       <Upload />
                       Upload
                     </a>

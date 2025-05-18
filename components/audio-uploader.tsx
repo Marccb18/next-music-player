@@ -11,9 +11,9 @@ export default function AudioUploader() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validar que el archivo sea de audio
-    if (!file.type.startsWith('audio/')) {
-      setError('Por favor, sube un archivo de audio válido');
+    // Validar que el archivo sea MP3
+    if (file.type !== 'audio/mpeg' && !file.name.toLowerCase().endsWith('.mp3')) {
+      setError('Por favor, sube un archivo MP3 válido');
       return;
     }
 
@@ -23,7 +23,7 @@ export default function AudioUploader() {
     try {
       // Generar un nombre único para el archivo
       const fileName = `${Date.now()}-${file.name}`;
-      
+
       const formData = new FormData();
       formData.append('file', file);
       formData.append('fileName', fileName);
@@ -34,15 +34,14 @@ export default function AudioUploader() {
       });
 
       if (!response.ok) {
-        throw new Error('Error en la subida del archivo');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error en la subida del archivo');
       }
 
       const data = await response.json();
-      // Asegurarse de que la URL sea absoluta
-      const cloudFrontUrl = data.url.startsWith('http') ? data.url : `https://${data.url}`;
-      setUploadedUrl(cloudFrontUrl);
+      setUploadedUrl(data.url);
     } catch (err) {
-      setError('Error al subir el archivo. Por favor, inténtalo de nuevo.');
+      setError(err instanceof Error ? err.message : 'Error al subir el archivo. Por favor, inténtalo de nuevo.');
       console.error(err);
     } finally {
       setIsUploading(false);
@@ -51,12 +50,12 @@ export default function AudioUploader() {
 
   return (
     <div className="p-4 border rounded-lg shadow-sm">
-      <h2 className="text-xl font-semibold mb-4">Subir archivo de audio</h2>
-      
+      <h2 className="text-xl font-semibold mb-4">Subir archivo MP3</h2>
+
       <div className="space-y-4">
         <input
           type="file"
-          accept="audio/*"
+          accept="audio/mpeg,.mp3"
           onChange={handleFileUpload}
           disabled={isUploading}
           className="block w-full text-sm text-gray-500
@@ -67,20 +66,14 @@ export default function AudioUploader() {
             hover:file:bg-violet-100"
         />
 
-        {isUploading && (
-          <p className="text-sm text-gray-600">Subiendo archivo...</p>
-        )}
+        {isUploading && <p className="text-sm text-gray-600">Subiendo archivo...</p>}
 
-        {error && (
-          <p className="text-sm text-red-600">{error}</p>
-        )}
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
         {uploadedUrl && (
           <div className="mt-4">
             <p className="text-sm text-green-600">¡Archivo subido con éxito!</p>
-            <p className="text-sm text-gray-600 break-all mt-2">
-              URL: {uploadedUrl}
-            </p>
+            <p className="text-sm text-gray-600 break-all mt-2">URL: {uploadedUrl}</p>
             <audio controls className="mt-2 w-full">
               <source src={uploadedUrl} type="audio/mpeg" />
               Tu navegador no soporta el elemento de audio.
@@ -90,4 +83,4 @@ export default function AudioUploader() {
       </div>
     </div>
   );
-} 
+}

@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import AudioUploader from '@/components/audio-uploader';
+
 import { connectMongo } from '@/lib/mongo';
 import { User } from '@/lib/mongo/models/Users';
-
-import AudioUploader from '@/components/audio-uploader';
 
 export default async function HomePage() {
   const userCookie = cookies().get('user_id');
