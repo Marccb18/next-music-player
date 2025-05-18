@@ -10,6 +10,7 @@ const trackSchema = new mongoose.Schema(
     group: { type: objectId, ref: 'Groups' },
     image: { type: String, required: false },
     url: { type: String, required: true },
+    spotifyId: { type: String, required: true, message: 'Spotify ID is required' },
     release: {
       type: objectId,
       ref: 'Release',
