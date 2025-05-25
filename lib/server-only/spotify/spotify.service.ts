@@ -1,6 +1,7 @@
 'use server';
 
 import axios from 'axios';
+
 import { SpotifyAlbumWithTracks, SpotifySearchResponse, SpotifyTrack } from './spotify.types';
 
 const SPOTIFY_CLIENT_ID = process.env.NEXT_PRIVATE_SPOTIFY_CLIENT_ID!;

@@ -98,4 +98,11 @@ interface SpotifyAlbumWithTracks {
   tracks: SpotifyTrack[];
 }
 
-export type { SpotifyTrack, SpotifySearchResponse, SimplifiedTrack, SpotifyAlbum, SpotifyArtist, SpotifyAlbumWithTracks };
+export type {
+  SpotifyTrack,
+  SpotifySearchResponse,
+  SimplifiedTrack,
+  SpotifyAlbum,
+  SpotifyArtist,
+  SpotifyAlbumWithTracks,
+};

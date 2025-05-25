@@ -1,16 +1,17 @@
-import { Search, ChevronRight } from "lucide-react"
-import { Button } from "../../primitives/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../primitives/card"
-import { Input } from "../../primitives/input"
-import { Label } from "../../primitives/label"
+import { ChevronRight, Search } from 'lucide-react';
+
+import { Button } from '../../primitives/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../primitives/card';
+import { Input } from '../../primitives/input';
+import { Label } from '../../primitives/label';
 
 interface Step1SearchProps {
-  releaseName: string
-  artistName: string
-  isSearching: boolean
-  onReleaseNameChange: (value: string) => void
-  onArtistNameChange: (value: string) => void
-  onSearch: () => void
+  releaseName: string;
+  artistName: string;
+  isSearching: boolean;
+  onReleaseNameChange: (value: string) => void;
+  onArtistNameChange: (value: string) => void;
+  onSearch: () => void;
 }
 
 export function Step1Search({
@@ -21,7 +22,7 @@ export function Step1Search({
   onArtistNameChange,
   onSearch,
 }: Step1SearchProps) {
-  const canProceed = releaseName.trim() && artistName.trim()
+  const canProceed = releaseName.trim() && artistName.trim();
 
   return (
     <Card className="max-w-2xl mx-auto transform transition-all duration-300 hover:shadow-lg">
@@ -76,5 +77,5 @@ export function Step1Search({
         </div>
       </CardContent>
     </Card>
-  )
-} 
+  );
+}

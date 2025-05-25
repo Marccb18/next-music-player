@@ -1,15 +1,16 @@
-import { Upload, ChevronLeft, Check, FileAudio, X } from "lucide-react"
-import { Button } from "../../primitives/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../primitives/card"
-import { SpotifyRelease, TrackFile } from "../types"
+import { Check, ChevronLeft, FileAudio, Upload, X } from 'lucide-react';
+
+import { Button } from '../../primitives/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../primitives/card';
+import { SpotifyRelease, TrackFile } from '../types';
 
 interface Step3UploadProps {
-  spotifyData: SpotifyRelease
-  trackFiles: TrackFile[]
-  onBack: () => void
-  onComplete: () => void
-  onOpenUploadDrawer: (trackId: string) => void
-  onRemoveTrackFile: (trackId: string) => void
+  spotifyData: SpotifyRelease;
+  trackFiles: TrackFile[];
+  onBack: () => void;
+  onComplete: () => void;
+  onOpenUploadDrawer: (trackId: string) => void;
+  onRemoveTrackFile: (trackId: string) => void;
 }
 
 export function Step3Upload({
@@ -20,20 +21,20 @@ export function Step3Upload({
   onOpenUploadDrawer,
   onRemoveTrackFile,
 }: Step3UploadProps) {
-  const uploadedFilesCount = trackFiles.filter((tf) => tf.file !== null).length
-  const canComplete = trackFiles.some((tf) => tf.file !== null)
+  const uploadedFilesCount = trackFiles.filter((tf) => tf.file !== null).length;
+  const canComplete = trackFiles.some((tf) => tf.file !== null);
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const sizes = ["Bytes", "KB", "MB", "GB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-  }
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   const getTrackFile = (trackId: string) => {
-    return trackFiles.find((tf) => tf.trackId === trackId)?.file || null
-  }
+    return trackFiles.find((tf) => tf.trackId === trackId)?.file || null;
+  };
 
   return (
     <Card className="max-w-5xl mx-auto transform transition-all duration-300 hover:shadow-lg">
@@ -43,8 +44,8 @@ export function Step3Upload({
           Subir Archivos de Audio
         </CardTitle>
         <CardDescription>
-          Añade los archivos .mp3 que desees subir. No es necesario subir todas las canciones ({uploadedFilesCount}/
-          {spotifyData.totalTracks} subidos)
+          Añade los archivos .mp3 que desees subir. No es necesario subir todas las canciones (
+          {uploadedFilesCount}/{spotifyData.totalTracks} subidos)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -59,14 +60,16 @@ export function Step3Upload({
         {/* Track List with Upload */}
         <div className="space-y-3">
           {spotifyData.tracks.map((track) => {
-            const trackFile = getTrackFile(track.id)
+            const trackFile = getTrackFile(track.id);
             return (
               <div
                 key={track.id}
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors duration-150"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-sm text-slate-500 w-8 text-center">{track.trackNumber}</span>
+                  <span className="text-sm text-slate-500 w-8 text-center">
+                    {track.trackNumber}
+                  </span>
                   <div className="flex-1">
                     <p className="font-medium text-slate-900">{track.name}</p>
                     <p className="text-sm text-slate-500">{track.duration}</p>
@@ -83,7 +86,9 @@ export function Step3Upload({
                             ? `${trackFile.name.substring(0, 20)}...`
                             : trackFile.name}
                         </span>
-                        <span className="text-xs text-green-600">({formatFileSize(trackFile.size)})</span>
+                        <span className="text-xs text-green-600">
+                          ({formatFileSize(trackFile.size)})
+                        </span>
                       </div>
                       <Button
                         size="sm"
@@ -107,7 +112,7 @@ export function Step3Upload({
                   )}
                 </div>
               </div>
-            )
+            );
           })}
         </div>
 
@@ -131,5 +136,5 @@ export function Step3Upload({
         </div>
       </CardContent>
     </Card>
-  )
-} 
+  );
+}

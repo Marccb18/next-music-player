@@ -1,4 +1,4 @@
-import SpotifyUploader from '@/components/upload-song-process/spotify-uploader';
+import SpotifyUploader from '@/components/upload-song-process';
 
 export default function UploadPage() {
   return (

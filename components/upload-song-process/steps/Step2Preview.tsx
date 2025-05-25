@@ -1,15 +1,17 @@
-import { Music, ChevronLeft, ChevronRight, Play } from "lucide-react"
-import Image from "next/image"
-import { Button } from "../../primitives/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../primitives/card"
-import { Badge } from "../../primitives/badge"
-import { Separator } from "../../primitives/separator"
-import { SpotifyRelease } from "../types"
+import { ChevronLeft, ChevronRight, Music, Play } from 'lucide-react';
+
+import Image from 'next/image';
+
+import { Badge } from '../../primitives/badge';
+import { Button } from '../../primitives/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../primitives/card';
+import { Separator } from '../../primitives/separator';
+import { SpotifyRelease } from '../types';
 
 interface Step2PreviewProps {
-  spotifyData: SpotifyRelease
-  onBack: () => void
-  onNext: () => void
+  spotifyData: SpotifyRelease;
+  onBack: () => void;
+  onNext: () => void;
 }
 
 export function Step2Preview({ spotifyData, onBack, onNext }: Step2PreviewProps) {
@@ -20,14 +22,16 @@ export function Step2Preview({ spotifyData, onBack, onNext }: Step2PreviewProps)
           <Music className="w-5 h-5" />
           Previsualización del Lanzamiento
         </CardTitle>
-        <CardDescription>Verifica que esta sea la información correcta del lanzamiento</CardDescription>
+        <CardDescription>
+          Verifica que esta sea la información correcta del lanzamiento
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid md:grid-cols-3 gap-6">
           {/* Album Art */}
           <div className="space-y-4">
             <Image
-              src={spotifyData.image || "/placeholder.svg"}
+              src={spotifyData.image || '/placeholder.svg'}
               alt={spotifyData.name}
               width={300}
               height={300}
@@ -88,15 +92,12 @@ export function Step2Preview({ spotifyData, onBack, onNext }: Step2PreviewProps)
             <ChevronLeft className="w-4 h-4 mr-2" />
             Volver
           </Button>
-          <Button
-            onClick={onNext}
-            className="transition-all duration-200 hover:scale-105"
-          >
+          <Button onClick={onNext} className="transition-all duration-200 hover:scale-105">
             Continuar
             <ChevronRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </CardContent>
     </Card>
-  )
-} 
+  );
+}
