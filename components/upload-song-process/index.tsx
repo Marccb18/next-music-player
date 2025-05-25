@@ -126,7 +126,7 @@ export default function SpotifyUploader() {
   const handleComplete = () => {
     setIsConfirmDialogOpen(true);
   };
-
+ 
   const handleConfirmComplete = () => {
     // Here you would handle the actual submission of the files
     // Only the tracks with files will be submitted
