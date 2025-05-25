@@ -5,7 +5,11 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { searchSpotifyAlbumBySong } from '@/lib/server-only/spotify';
+import { uploadFileToS3 } from '@/lib/client/aws/s3';
+import {
+  createOrUpdateReleaseWithFiles,
+  searchSpotifyAlbumBySong,
+} from '@/lib/server-only/spotify';
 
 import {
   AlertDialog,
@@ -33,6 +37,7 @@ export default function SpotifyUploader() {
   const [selectedTrackForUpload, setSelectedTrackForUpload] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const searchSpotifyRelease = async () => {
     if (!releaseName || !artistName) return;
@@ -52,6 +57,7 @@ export default function SpotifyUploader() {
         id: album.id,
         name: album.name,
         artist: album.artists[0].name,
+        artistId: album.artists[0].id,
         image: album.images[0]?.url || '/placeholder.svg',
         releaseDate: album.release_date,
         albumType: album.album_type,
@@ -126,13 +132,54 @@ export default function SpotifyUploader() {
   const handleComplete = () => {
     setIsConfirmDialogOpen(true);
   };
- 
-  const handleConfirmComplete = () => {
-    // Here you would handle the actual submission of the files
-    // Only the tracks with files will be submitted
-    const tracksToSubmit = trackFiles.filter((tf) => tf.file !== null);
-    console.log('Submitting tracks:', tracksToSubmit);
-    // Add your submission logic here
+
+  const handleConfirmComplete = async () => {
+    if (!spotifyData) return;
+
+    setIsSubmitting(true);
+    try {
+      // Subir archivos a S3 y obtener sus URLs
+      const uploadedTracks = await Promise.all(
+        trackFiles
+          .filter((tf) => tf.file !== null)
+          .map(async (tf) => {
+            const file = tf.file!;
+            const key = `tracks/${spotifyData.id}/${file.name}`;
+            const audioUrl = await uploadFileToS3(file, key);
+
+            return {
+              trackId: tf.trackId,
+              audioUrl,
+              fileName: file.name,
+            };
+          })
+      );
+
+      // Crear o actualizar el lanzamiento con los archivos
+      await createOrUpdateReleaseWithFiles(spotifyData, uploadedTracks);
+
+      toast.success('Lanzamiento importado correctamente');
+      // Resetear el estado
+      setCurrentStep(1);
+      setReleaseName('');
+      setArtistName('');
+      setSpotifyData(null);
+      setTrackFiles([]);
+      setIsConfirmDialogOpen(false);
+    } catch (error) {
+      console.error('Error al importar el lanzamiento:', error);
+      toast.error('Error al importar el lanzamiento');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleReleaseNameChange = (value: string) => {
+    setReleaseName(value);
+  };
+
+  const handleArtistNameChange = (value: string) => {
+    setArtistName(value);
   };
 
   return (
@@ -182,14 +229,14 @@ export default function SpotifyUploader() {
         </div>
 
         {/* Step Content */}
-        <div className="transition-all duration-500 ease-in-out">
+        <div>
           {currentStep === 1 && (
             <Step1Search
               releaseName={releaseName}
               artistName={artistName}
               isSearching={isSearching}
-              onReleaseNameChange={setReleaseName}
-              onArtistNameChange={setArtistName}
+              onReleaseNameChange={handleReleaseNameChange}
+              onArtistNameChange={handleArtistNameChange}
               onSearch={searchSpotifyRelease}
             />
           )}
@@ -234,8 +281,17 @@ export default function SpotifyUploader() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmComplete}>Continuar</AlertDialogAction>
+              <AlertDialogCancel disabled={isSubmitting}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmComplete} disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Importando...
+                  </>
+                ) : (
+                  'Continuar'
+                )}
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

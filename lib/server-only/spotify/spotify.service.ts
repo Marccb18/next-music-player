@@ -1,8 +1,22 @@
 'use server';
 
 import axios from 'axios';
+import mongoose from 'mongoose';
 
-import { SpotifyAlbumWithTracks, SpotifySearchResponse, SpotifyTrack } from './spotify.types';
+import { SpotifyRelease } from '@/components/upload-song-process/types';
+
+import connectMongo from '@/lib/mongo';
+import { Artist } from '@/lib/mongo/models/Artists';
+import { Genre } from '@/lib/mongo/models/Genres';
+import { Release } from '@/lib/mongo/models/Releases';
+import { Tracks } from '@/lib/mongo/models/Tracks';
+
+import {
+  SpotifyAlbumWithTracks,
+  SpotifyArtist,
+  SpotifySearchResponse,
+  SpotifyTrack,
+} from './spotify.types';
 
 const SPOTIFY_CLIENT_ID = process.env.NEXT_PRIVATE_SPOTIFY_CLIENT_ID!;
 const SPOTIFY_CLIENT_SECRET = process.env.NEXT_PRIVATE_SPOTIFY_CLIENT_SECRET!;
@@ -62,6 +76,15 @@ async function getFullAlbum(albumId: string, token: string): Promise<SpotifyAlbu
   };
 }
 
+async function getArtistGenres(artistId: string, token: string): Promise<string[]> {
+  const response = await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data.genres || [];
+}
+
 async function searchSpotifyAlbumBySong(
   titulo: string,
   artista: string
@@ -71,34 +94,386 @@ async function searchSpotifyAlbumBySong(
     const artistId = await getArtistId(artista, token);
     if (!artistId) return null;
 
-    const query = `track:${titulo} artist:${artista}`;
+    // Buscar por álbum y artista
+    const query = `album:${titulo} artist:${artista}`;
     const response = await axios.get<SpotifySearchResponse>('https://api.spotify.com/v1/search', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
       params: {
         q: query,
-        type: 'track',
-        limit: 5,
+        type: 'album',
+        limit: 1,
         market: 'ES',
       },
     });
 
-    const filteredTracks = response.data.tracks.items.filter((track) =>
-      track.artists.some((a) => a.id === artistId)
-    );
+    const album = response.data.albums?.items[0];
+    if (!album) return null;
 
-    if (filteredTracks.length === 0) return null;
-
-    const albumId = filteredTracks[0].album.id;
-
-    const albumWithTracks = await getFullAlbum(albumId, token);
-
-    return albumWithTracks;
+    return await getFullAlbum(album.id, token);
   } catch (error) {
-    console.error('Error en la búsqueda completa de álbum:', error);
+    console.error('Error en la búsqueda de álbum:', error);
     return null;
   }
 }
 
-export { searchSpotifyAlbumBySong };
+interface UploadedTrack {
+  trackId: string;
+  audioUrl: string;
+  fileName: string;
+}
+
+function transformSpotifyReleaseToAlbum(release: SpotifyRelease): SpotifyAlbumWithTracks {
+  return {
+    id: release.id,
+    name: release.name,
+    artists: [
+      {
+        id: release.artistId,
+        name: release.artist,
+        type: 'artist',
+        external_urls: { spotify: '' },
+        href: '',
+        uri: '',
+      },
+    ],
+    images: [{ url: release.image, height: 300, width: 300 }],
+    release_date: release.releaseDate,
+    album_type: release.albumType,
+    total_tracks: release.totalTracks,
+    tracks: release.tracks.map((track) => ({
+      id: track.id,
+      name: track.name,
+      duration_ms: 0,
+      track_number: track.trackNumber,
+      disc_number: 1,
+      explicit: false,
+      popularity: 0,
+      external_urls: { spotify: `https://open.spotify.com/track/${track.id}` },
+      album: {
+        id: release.id,
+        name: release.name,
+        album_type: release.albumType,
+        artists: [
+          {
+            id: release.artistId,
+            name: release.artist,
+            type: 'artist',
+            external_urls: { spotify: '' },
+            href: '',
+            uri: '',
+          },
+        ],
+        available_markets: [],
+        external_urls: { spotify: '' },
+        href: '',
+        images: [{ url: release.image, height: 300, width: 300 }],
+        release_date: release.releaseDate,
+        release_date_precision: 'day',
+        total_tracks: release.totalTracks,
+        type: 'album',
+        uri: '',
+      },
+      artists: [
+        {
+          id: release.artistId,
+          name: release.artist,
+          type: 'artist',
+          external_urls: { spotify: '' },
+          href: '',
+          uri: '',
+        },
+      ],
+      available_markets: [],
+      external_ids: { isrc: '' },
+      href: '',
+      is_local: false,
+      is_playable: true,
+      preview_url: null,
+      type: 'track',
+      uri: '',
+    })),
+  };
+}
+
+async function createOrUpdateReleaseWithFiles(
+  spotifyAlbum: SpotifyAlbumWithTracks | SpotifyRelease,
+  uploadedTracks: UploadedTrack[]
+) {
+  await connectMongo();
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const token = await getAccessToken();
+    const album =
+      'artists' in spotifyAlbum ? spotifyAlbum : transformSpotifyReleaseToAlbum(spotifyAlbum);
+
+    // 1. Crear o actualizar artistas y obtener sus géneros
+    const artistIds = await Promise.all(
+      album.artists.map(async (spotifyArtist) => {
+        // Buscar artista existente
+        let artist = await Artist.findOne({ spotifyId: spotifyArtist.id });
+
+        // Obtener géneros del artista desde Spotify
+        const artistGenres = await getArtistGenres(spotifyArtist.id, token);
+
+        // Crear o actualizar géneros
+        const genreIds = await Promise.all(
+          artistGenres.map(async (genreName) => {
+            let genre = await Genre.findOne({ name: genreName });
+            if (!genre) {
+              const [newGenre] = await Genre.create(
+                [
+                  {
+                    name: genreName,
+                    spotifyId: `${spotifyArtist.id}_${genreName}`,
+                  },
+                ],
+                { session }
+              );
+              return newGenre.id;
+            }
+            return genre.id;
+          })
+        );
+
+        if (!artist) {
+          // Crear nuevo artista
+          const [newArtist] = await Artist.create(
+            [
+              {
+                name: spotifyArtist.name,
+                spotifyId: spotifyArtist.id,
+                type: spotifyArtist.type === 'artist' ? 'artist' : 'group',
+                images: album.images.map((img) => ({
+                  url: img.url,
+                  height: img.height,
+                  width: img.width,
+                })),
+                genres: genreIds,
+              },
+            ],
+            { session }
+          );
+          return newArtist.id;
+        } else {
+          // Actualizar artista existente
+          await Artist.findOneAndUpdate(
+            { spotifyId: spotifyArtist.id },
+            {
+              $addToSet: {
+                genres: { $each: genreIds },
+              },
+            },
+            { session }
+          );
+          return artist.id;
+        }
+      })
+    );
+
+    // Obtener todos los géneros únicos de los artistas
+    const uniqueGenreIds = [
+      ...new Set(
+        (await Artist.find({ _id: { $in: artistIds } }).select('genres')).flatMap((a) => a.genres)
+      ),
+    ];
+
+    // 2. Crear o actualizar el álbum
+    let release = await Release.findOne({ spotifyId: album.id });
+
+    const releaseData = {
+      name: album.name,
+      spotifyId: album.id,
+      artists: artistIds,
+      cover: album.images[0]?.url || null,
+      releaseDate: new Date(album.release_date),
+      type: album.album_type,
+      totalTracks: album.total_tracks,
+      popularity: 0,
+      genres: uniqueGenreIds,
+    };
+
+    if (release) {
+      release = await Release.findOneAndUpdate(
+        { spotifyId: album.id },
+        { $set: releaseData },
+        { session, new: true }
+      );
+    } else {
+      const [newRelease] = await Release.create([releaseData], { session });
+      release = newRelease;
+    }
+
+    // 3. Crear o actualizar tracks solo para las canciones subidas
+    const trackPromises = album.tracks
+      .filter((track) => uploadedTracks.some((ut) => ut.trackId === track.id))
+      .map(async (spotifyTrack) => {
+        const uploadedTrack = uploadedTracks.find((ut) => ut.trackId === spotifyTrack.id);
+        let track = await Tracks.findOne({ spotifyId: spotifyTrack.id });
+
+        const trackData = {
+          name: spotifyTrack.name,
+          spotifyId: spotifyTrack.id,
+          artists: artistIds,
+          album: release.id,
+          image: album.images[0]?.url || null,
+          url:
+            spotifyTrack.external_urls.spotify ||
+            `https://open.spotify.com/track/${spotifyTrack.id}`,
+          duration: spotifyTrack.duration_ms,
+          trackNumber: spotifyTrack.track_number,
+          discNumber: spotifyTrack.disc_number,
+          isExplicit: spotifyTrack.explicit,
+          popularity: spotifyTrack.popularity,
+          audioUrl: uploadedTrack?.audioUrl || '',
+          fileName: uploadedTrack?.fileName || '',
+          genres: uniqueGenreIds,
+        };
+
+        if (track) {
+          track = await Tracks.findOneAndUpdate(
+            { spotifyId: spotifyTrack.id },
+            { $set: trackData },
+            { session, new: true }
+          );
+          return track.id;
+        } else {
+          const [newTrack] = await Tracks.create([trackData], { session });
+          return newTrack.id;
+        }
+      });
+
+    const trackIds = await Promise.all(trackPromises);
+
+    // 4. Actualizar el álbum con los IDs de las canciones
+    await Release.findOneAndUpdate(
+      { spotifyId: album.id },
+      { $addToSet: { tracks: { $each: trackIds } } },
+      { session }
+    );
+
+    // 5. Actualizar los artistas con las referencias al álbum
+    await Artist.updateMany(
+      { _id: { $in: artistIds } },
+      {
+        $addToSet: {
+          albums: release.id,
+        },
+      },
+      { session }
+    );
+
+    await session.commitTransaction();
+
+    // Devolver una versión simplificada del release para evitar referencias circulares
+    return {
+      id: release.id,
+      name: release.name,
+      spotifyId: release.spotifyId,
+      cover: release.cover,
+      type: release.type,
+      totalTracks: release.totalTracks,
+      tracks: trackIds,
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    console.error('Error al crear/actualizar el lanzamiento:', error);
+    throw error;
+  } finally {
+    session.endSession();
+  }
+}
+
+interface TrackStatus {
+  trackId: string;
+  spotifyId: string;
+  name: string;
+  isUploaded: boolean;
+  audioUrl?: string;
+  fileName?: string;
+}
+
+async function getReleaseTracksStatus(spotifyAlbumId: string): Promise<TrackStatus[]> {
+  // Asegurar la conexión a MongoDB antes de empezar
+  await connectMongo();
+
+  try {
+    // 1. Buscar el álbum en nuestra base de datos
+    const release = await Release.findOne({ spotifyId: spotifyAlbumId }).populate({
+      path: 'tracks',
+      select: 'spotifyId name audioUrl fileName',
+    });
+
+    if (!release) {
+      return [];
+    }
+
+    // 2. Mapear el estado de cada canción
+    return release.tracks.map((track: any) => ({
+      trackId: track._id.toString(),
+      spotifyId: track.spotifyId,
+      name: track.name,
+      isUploaded: Boolean(track.audioUrl && track.fileName),
+      audioUrl: track.audioUrl,
+      fileName: track.fileName,
+    }));
+  } catch (error) {
+    console.error('Error al obtener el estado de las canciones:', error);
+    return [];
+  }
+}
+
+async function getExistingReleaseTracks(spotifyAlbumId: string): Promise<{
+  exists: boolean;
+  tracks: Array<{
+    spotifyId: string;
+    name: string;
+    audioUrl: string;
+    fileName: string;
+  }>;
+}> {
+  await connectMongo();
+
+  try {
+    const release = await Release.findOne({ spotifyId: spotifyAlbumId }).populate({
+      path: 'tracks',
+      select: 'spotifyId name audioUrl fileName',
+    });
+
+    if (!release) {
+      return {
+        exists: false,
+        tracks: [],
+      };
+    }
+
+    const tracks = release.tracks.map((track: any) => ({
+      spotifyId: track.spotifyId,
+      name: track.name,
+      audioUrl: track.audioUrl,
+      fileName: track.fileName,
+    }));
+
+    return {
+      exists: true,
+      tracks,
+    };
+  } catch (error) {
+    console.error('Error al verificar las canciones existentes:', error);
+    return {
+      exists: false,
+      tracks: [],
+    };
+  }
+}
+
+export {
+  searchSpotifyAlbumBySong,
+  createOrUpdateReleaseWithFiles,
+  getReleaseTracksStatus,
+  getExistingReleaseTracks,
+};

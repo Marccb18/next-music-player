@@ -2,8 +2,6 @@ import mongoose from 'mongoose';
 
 import toJSON from './plugins/toJSON';
 
-const objectId = mongoose.Schema.Types.ObjectId;
-
 const groupSchema = new mongoose.Schema(
   {
     groupName: {

@@ -1,5 +1,9 @@
 import { Check, ChevronLeft, FileAudio, Upload, X } from 'lucide-react';
 
+import { useEffect, useState } from 'react';
+
+import { getExistingReleaseTracks } from '@/lib/server-only/spotify/spotify.service';
+
 import { Button } from '../../primitives/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../primitives/card';
 import { SpotifyRelease, TrackFile } from '../types';
@@ -21,6 +25,38 @@ export function Step3Upload({
   onOpenUploadDrawer,
   onRemoveTrackFile,
 }: Step3UploadProps) {
+  const [existingTracks, setExistingTracks] = useState<
+    Record<string, { audioUrl: string; fileName: string }>
+  >({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadExistingTracks() {
+      try {
+        const { exists, tracks } = await getExistingReleaseTracks(spotifyData.id);
+        if (exists) {
+          const tracksMap = tracks.reduce(
+            (acc, track) => ({
+              ...acc,
+              [track.spotifyId]: {
+                audioUrl: track.audioUrl,
+                fileName: track.fileName,
+              },
+            }),
+            {}
+          );
+          setExistingTracks(tracksMap);
+        }
+      } catch (error) {
+        console.error('Error al cargar las canciones existentes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadExistingTracks();
+  }, [spotifyData.id]);
+
   const uploadedFilesCount = trackFiles.filter((tf) => tf.file !== null).length;
   const canComplete = trackFiles.some((tf) => tf.file !== null);
 
@@ -34,6 +70,33 @@ export function Step3Upload({
 
   const getTrackFile = (trackId: string) => {
     return trackFiles.find((tf) => tf.trackId === trackId)?.file || null;
+  };
+
+  const isTrackUploaded = (trackId: string) => {
+    const trackFile = getTrackFile(trackId);
+    const existingTrack = existingTracks[trackId];
+    return Boolean(existingTrack) || Boolean(trackFile);
+  };
+
+  const getTrackFileName = (trackId: string) => {
+    const trackFile = getTrackFile(trackId);
+    const existingTrack = existingTracks[trackId];
+
+    if (trackFile) {
+      return trackFile.name;
+    }
+    if (existingTrack) {
+      return existingTrack.fileName;
+    }
+    return '';
+  };
+
+  const getTrackFileSize = (trackId: string) => {
+    const trackFile = getTrackFile(trackId);
+    if (trackFile) {
+      return formatFileSize(trackFile.size);
+    }
+    return '';
   };
 
   return (
@@ -60,7 +123,10 @@ export function Step3Upload({
         {/* Track List with Upload */}
         <div className="space-y-3">
           {spotifyData.tracks.map((track) => {
-            const trackFile = getTrackFile(track.id);
+            const isUploaded = isTrackUploaded(track.id);
+            const fileName = getTrackFileName(track.id);
+            const fileSize = getTrackFileSize(track.id);
+
             return (
               <div
                 key={track.id}
@@ -77,18 +143,14 @@ export function Step3Upload({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {trackFile ? (
+                  {isUploaded ? (
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full">
                         <FileAudio className="w-4 h-4 text-green-600" />
                         <span className="text-sm text-green-700 font-medium">
-                          {trackFile.name.length > 20
-                            ? `${trackFile.name.substring(0, 20)}...`
-                            : trackFile.name}
+                          {fileName.length > 20 ? `${fileName.substring(0, 20)}...` : fileName}
                         </span>
-                        <span className="text-xs text-green-600">
-                          ({formatFileSize(trackFile.size)})
-                        </span>
+                        {fileSize && <span className="text-xs text-green-600">({fileSize})</span>}
                       </div>
                       <Button
                         size="sm"

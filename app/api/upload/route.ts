@@ -4,38 +4,26 @@ import { NextResponse } from 'next/server';
 
 import { s3Client } from '@/lib/server-only/aws/s3';
 
-const requiredEnvVars = {
-  bucketName: process.env.AWS_S3_BUCKET_NAME,
-  region: process.env.AWS_REGION,
-};
-
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const fileName = formData.get('fileName') as string;
+    const key = formData.get('key') as string;
 
-    if (!file || !fileName) {
-      return NextResponse.json(
-        { error: 'Archivo y nombre de archivo son requeridos' },
-        { status: 400 }
-      );
+    if (!file || !key) {
+      return NextResponse.json({ error: 'Archivo y key son requeridos' }, { status: 400 });
     }
 
     // Validar que el archivo sea MP3
-    if (file.type !== 'audio/mpeg' && !fileName.toLowerCase().endsWith('.mp3')) {
+    if (file.type !== 'audio/mpeg' && !file.name.toLowerCase().endsWith('.mp3')) {
       return NextResponse.json({ error: 'Solo se permiten archivos MP3' }, { status: 400 });
-    }
-
-    if (!requiredEnvVars.bucketName) {
-      return NextResponse.json({ error: 'Configuración de AWS incompleta' }, { status: 500 });
     }
 
     // Subir archivo a S3
     const fileBuffer = await file.arrayBuffer();
     const command = new PutObjectCommand({
-      Bucket: requiredEnvVars.bucketName,
-      Key: fileName,
+      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
+      Key: key,
       Body: Buffer.from(fileBuffer),
       ContentType: 'audio/mpeg',
       CacheControl: 'max-age=31536000',
@@ -44,11 +32,11 @@ export async function POST(request: Request) {
     await s3Client.send(command);
 
     // Construir la URL directa de S3
-    const fileUrl = `https://${requiredEnvVars.bucketName}.s3.${requiredEnvVars.region}.amazonaws.com/${fileName}`;
+    const fileUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
 
     return NextResponse.json({
       url: fileUrl,
-      fileName,
+      key,
       message: 'Archivo subido exitosamente',
     });
   } catch (error) {

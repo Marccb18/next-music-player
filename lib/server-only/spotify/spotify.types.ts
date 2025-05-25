@@ -60,6 +60,9 @@ interface SpotifySearchResponse {
   tracks: {
     items: SpotifyTrack[];
   };
+  albums: {
+    items: SpotifyAlbum[];
+  };
 }
 
 interface SimplifiedTrack {
@@ -100,9 +103,9 @@ interface SpotifyAlbumWithTracks {
 
 export type {
   SpotifyTrack,
-  SpotifySearchResponse,
   SimplifiedTrack,
   SpotifyAlbum,
   SpotifyArtist,
   SpotifyAlbumWithTracks,
+  SpotifySearchResponse,
 };

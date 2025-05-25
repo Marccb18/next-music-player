@@ -9,6 +9,7 @@ export interface SpotifyRelease {
   id: string;
   name: string;
   artist: string;
+  artistId: string;
   image: string;
   releaseDate: string;
   tracks: SpotifyTrack[];

@@ -4,40 +4,59 @@ import toJSON from './plugins/toJSON';
 
 const objectId = mongoose.Schema.Types.ObjectId;
 
-const genreSchema = new mongoose.Schema(
+const artistSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
-      unique: true,
       index: true,
-      trim: true,
     },
     spotifyId: {
       type: String,
+      required: true,
       unique: true,
-      sparse: true,
     },
-    parentGenre: {
-      type: objectId,
-      ref: 'Genres',
-    },
-    subGenres: [
+    images: [
+      {
+        url: String,
+        height: Number,
+        width: Number,
+      },
+    ],
+    genres: [
       {
         type: objectId,
         ref: 'Genres',
+        index: true,
       },
     ],
-    artists: [
+    popularity: {
+      type: Number,
+      min: 0,
+      max: 100,
+      index: true,
+    },
+    type: {
+      type: String,
+      enum: ['artist', 'group'],
+      required: true,
+    },
+    members: [
       {
         type: objectId,
         ref: 'Artists',
       },
     ],
-    tracks: [
+    albums: [
       {
         type: objectId,
-        ref: 'Tracks',
+        ref: 'Releases',
+      },
+    ],
+    singles: [
+      {
+        type: objectId,
+        ref: 'Releases',
       },
     ],
     _createdAt: {
@@ -59,7 +78,9 @@ const genreSchema = new mongoose.Schema(
   }
 );
 
-genreSchema.index({ name: 'text' });
-genreSchema.plugin(toJSON);
+artistSchema.index({ name: 'text' });
+artistSchema.index({ spotifyId: 1 }, { unique: true });
 
-export const Genre = mongoose.models.Genre || mongoose.model('Genre', genreSchema);
+artistSchema.plugin(toJSON);
+
+export const Artist = mongoose.models.Artist || mongoose.model('Artist', artistSchema);

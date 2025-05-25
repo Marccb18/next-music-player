@@ -6,19 +6,79 @@ const objectId = mongoose.Schema.Types.ObjectId;
 
 const releaseSchema = new mongoose.Schema(
   {
-    group: { type: objectId, ref: 'Groups' },
-    name: { type: String, required: true },
-    cover: { type: String, required: false },
-    tracks: { type: [objectId], ref: 'Tracks' },
-    releaseDate: { type: Date, required: false },
+    name: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    spotifyId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    artists: [
+      {
+        type: objectId,
+        ref: 'Artists',
+        required: true,
+      },
+    ],
+    cover: {
+      type: String,
+      required: false,
+    },
+    tracks: [
+      {
+        type: objectId,
+        ref: 'Tracks',
+      },
+    ],
+    releaseDate: {
+      type: Date,
+      required: false,
+      index: true,
+    },
     type: {
       type: String,
-      default: '',
-      trim: true,
-      enum: ['album', 'single', 'ep', '', null],
+      required: true,
+      enum: ['album', 'single', 'ep'],
+      index: true,
     },
-    _createdAt: { type: Date, default: Date.now },
-    _updatedAt: { type: Date, default: Date.now },
+    label: {
+      type: String,
+    },
+    copyrights: [
+      {
+        type: String,
+      },
+    ],
+    popularity: {
+      type: Number,
+      min: 0,
+      max: 100,
+      index: true,
+    },
+    genres: [
+      {
+        type: objectId,
+        ref: 'Genres',
+      },
+    ],
+    totalTracks: {
+      type: Number,
+      required: true,
+    },
+    releaseGroup: {
+      type: String,
+    },
+    _createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    _updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: {
@@ -29,6 +89,12 @@ const releaseSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+// Índices
+releaseSchema.index({ name: 'text' });
+releaseSchema.index({ spotifyId: 1 }, { unique: true });
+releaseSchema.index({ releaseDate: -1 });
+releaseSchema.index({ popularity: -1 });
 
 releaseSchema.plugin(toJSON);
 
