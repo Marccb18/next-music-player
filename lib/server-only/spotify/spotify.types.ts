@@ -83,4 +83,19 @@ interface SimplifiedTrack {
   popularity: number;
 }
 
-export type { SpotifyTrack, SpotifySearchResponse, SimplifiedTrack, SpotifyAlbum, SpotifyArtist };
+interface SpotifyAlbumWithTracks {
+  id: string;
+  name: string;
+  artists: SpotifyArtist[];
+  images: Array<{
+    height: number;
+    width: number;
+    url: string;
+  }>;
+  release_date: string;
+  total_tracks: number;
+  album_type: string;
+  tracks: SpotifyTrack[];
+}
+
+export type { SpotifyTrack, SpotifySearchResponse, SimplifiedTrack, SpotifyAlbum, SpotifyArtist, SpotifyAlbumWithTracks };

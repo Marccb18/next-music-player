@@ -1,9 +1,9 @@
-import UploadSongProcess from '@/components/upload-song-process';
+import SpotifyUploader from '@/components/upload-song-process/spotify-uploader';
 
 export default function UploadPage() {
   return (
-    <div>
-      <UploadSongProcess />
+    <div className="w-full">
+      <SpotifyUploader />
     </div>
   );
 }

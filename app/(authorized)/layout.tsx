@@ -14,7 +14,7 @@ export default function AuthorizedLayout({ children }: { children: React.ReactNo
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
-      <main>{children}</main>
+      <main className="flex-1 w-full h-full">{children}</main>
     </SidebarProvider>
   );
 }
