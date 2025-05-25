@@ -5,12 +5,6 @@ import { SidebarProvider } from '@/components/primitives/sidebar';
 import { AppSidebar } from '@/components/sidebar/index';
 
 export default function AuthorizedLayout({ children }: { children: React.ReactNode }) {
-  const userCookie = cookies().get('user_id');
-
-  if (!userCookie) {
-    redirect('/login');
-  }
-
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />

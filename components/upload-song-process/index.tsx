@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { uploadFileToS3 } from '@/lib/client/aws/s3';
+import { uploadFileToS3 } from '@/lib/client-only/aws/s3';
 import {
   createOrUpdateReleaseWithFiles,
   searchSpotifyAlbumBySong,
