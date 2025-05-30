@@ -22,7 +22,7 @@ import { Input } from '@/components/primitives/input';
 import { Label } from '@/components/primitives/label';
 import { Separator } from '@/components/primitives/separator';
 
-import { useUserStore } from '@/lib/client-only/store/userStore';
+import { useUserStore } from '@/lib/client-only/stores/userStore';
 import { login } from '@/lib/server-only/users/users.actions';
 import { type LoginFormData, loginSchema } from '@/lib/validations/auth.schema';
 

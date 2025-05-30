@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { useUserStore } from '@/lib/client-only/store/userStore';
+import { useUserStore } from '@/lib/client-only/stores/userStore';
 
 import { logout as logoutAction } from '../server-only/users/users.actions';
 
