@@ -1,86 +1,53 @@
 'use client';
 
-import {
-  MediaPlayer,
-  MediaProvider,
-  useMediaPlayer,
-  useMediaRemote,
-} from '@vidstack/react';
+import { MediaPlayer, MediaProvider } from '@vidstack/react';
+import { useMediaStore } from '@vidstack/react';
+import { DefaultVideoLayout, defaultLayoutIcons } from '@vidstack/react/player/layouts/default';
+import { useEffect, useRef } from 'react';
+import { PlayButton } from './controls/play-button';
+import { ProgressBar } from './controls/progress-bar';
+import { TimeDisplay } from './controls/time-display';
+import { VolumeControl } from './controls/volume-control';
+import type { MediaPlayerInstance } from '@vidstack/react';
 
-import { useState } from 'react';
-import { Button } from '../primitives/button';
-import { usePlayerStore } from '@/lib/client-only/stores/playerStore';
-
-// Sample tracks data
-const tracks = [
-  {
-    id: 1,
-    title: 'Blinding Lights',
-    artist: 'The Weeknd',
-    album: 'After Hours',
-    cover: '/placeholder.svg?height=60&width=60',
-    src: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3',
-  },
-  {
-    id: 2,
-    title: 'Save Your Tears',
-    artist: 'The Weeknd',
-    album: 'After Hours',
-    cover: '/placeholder.svg?height=60&width=60',
-    src: 'https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg',
-  },
-  {
-    id: 3,
-    title: 'Starboy',
-    artist: 'The Weeknd ft. Daft Punk',
-    album: 'Starboy',
-    cover: '/placeholder.svg?height=60&width=60',
-    src: 'https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
-  },
-];
-
-function PlayerControls({ setCurrentTrackIndex }: { setCurrentTrackIndex: (index: number) => void }) {
-  const player = useMediaPlayer();
-  const playerRef = useMediaRemote();
-  const { setPlayerRef } = usePlayerStore();
-  setPlayerRef(playerRef);
-  return (
-    <div className="flex gap-2">
-      <Button onClick={() => player?.play()}>Play</Button>
-      <Button onClick={() => player?.pause()}>Pause</Button>
-      <Button onClick={() => setCurrentTrackIndex((prev) => (prev + 1) % tracks.length)}>Next</Button>
-    </div>
-  );
+interface AudioPlayerProps {
+  src: string;
+  title?: string;
+  artist?: string;
 }
 
-export default function Player() {
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const currentTrack = tracks[currentTrackIndex];
+export function AudioPlayer({ src, title, artist }: AudioPlayerProps) {
+  const playerRef = useRef<MediaPlayerInstance>(null);
+  const mediaStore = useMediaStore(playerRef);
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-red-500/80 dark:bg-gray-950/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800">
-      <div className="container mx-auto px-4 py-3">
-        <MediaPlayer
-          className="flex items-center justify-between w-full h-16"
-          src={currentTrack.src}
-          load="eager"
-          title={currentTrack.title}
-          aria-label={currentTrack.title}
-          artist={currentTrack.artist}
-          preload='auto'
-          streamType='on-demand'
-          viewType='audio'
-          onAudioTrackChange={(track) => {
-            console.log(track);
-          }}
-          logLevel='debug'
-        >
-          <MediaProvider>
-            <audio />
-          </MediaProvider>
-          <PlayerControls setCurrentTrackIndex={setCurrentTrackIndex} />
-        </MediaPlayer>
-      </div>
+    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+      <MediaPlayer
+        className="w-full "
+        title={title}
+        src={src}
+        ref={playerRef}
+      >
+        <MediaProvider>
+          <audio preload="none" src={src} />
+        </MediaProvider>
+
+        <div className="flex flex-col gap-2">
+          {/* Información de la canción */}
+          <div className="text-center">
+            <h3 className="text-lg font-semibold">{title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{artist}</p>
+          </div>
+
+          {/* Controles personalizados */}
+          <div className="flex items-center gap-4 px-4">
+            <PlayButton />
+            <ProgressBar />
+            <TimeDisplay />
+            <VolumeControl />
+          </div>
+        </div>
+      </MediaPlayer>
     </div>
   );
 }
