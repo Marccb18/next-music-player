@@ -11,6 +11,7 @@ import {
   searchSpotifyAlbumBySong,
 } from '@/lib/server-only/spotify';
 
+import { UploadDrawer } from '../drawers/UploadDrawer';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +22,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../primitives/alert-dialog';
-import { UploadDrawer } from './UploadDrawer';
 import { Step1Search } from './steps/Step1Search';
 import { Step2Preview } from './steps/Step2Preview';
 import { Step3Upload } from './steps/Step3Upload';
@@ -202,14 +202,14 @@ export default function SpotifyUploader() {
               <div key={step} className="flex items-center">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
-                    currentStep >= step ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                    currentStep >= step ? 'bg-black text-white' : 'bg-slate-200 text-slate-500'
                   }`}
                 >
                   {currentStep > step ? <Check className="w-5 h-5" /> : step}
                 </div>
                 <div className="ml-3 text-sm">
                   <div
-                    className={`font-medium ${currentStep >= step ? 'text-blue-600' : 'text-slate-500'}`}
+                    className={`font-medium ${currentStep >= step ? 'text-black' : 'text-slate-500'}`}
                   >
                     {step === 1 && 'Información'}
                     {step === 2 && 'Previsualización'}
@@ -219,7 +219,7 @@ export default function SpotifyUploader() {
                 {step < 3 && (
                   <div
                     className={`w-16 h-0.5 ml-8 transition-all duration-300 ${
-                      currentStep > step ? 'bg-blue-600' : 'bg-slate-200'
+                      currentStep > step ? 'bg-black' : 'bg-slate-200'
                     }`}
                   />
                 )}

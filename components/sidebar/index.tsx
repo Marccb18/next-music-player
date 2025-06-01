@@ -1,6 +1,8 @@
 'use client';
 
-import { Calendar, Home, Inbox, Search, Settings, Upload } from 'lucide-react';
+import { Heart, Home, Library, Mic2, Music, Plus, Search, Upload } from 'lucide-react';
+
+import Link from 'next/link';
 
 import {
   Sidebar,
@@ -8,77 +10,152 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from '@/components/primitives/sidebar';
 
 import { useAuth } from '@/lib/hooks/useAuth';
 
 import { AppSidebarFooter } from './footer';
 
-// Menu items.
-const items = [
+const navigationItems = [
   {
-    title: 'Home',
+    title: 'Inicio',
     url: '/',
     icon: Home,
   },
   {
-    title: 'Inbox',
-    url: '#',
-    icon: Inbox,
-  },
-  {
-    title: 'Calendar',
-    url: '#',
-    icon: Calendar,
-  },
-  {
-    title: 'Search',
+    title: 'Buscar',
     url: '#',
     icon: Search,
   },
   {
-    title: 'Settings',
+    title: 'Tu Biblioteca',
     url: '#',
-    icon: Settings,
+    icon: Library,
   },
+];
+
+const libraryItems = [
+  {
+    title: 'Canciones que te gustan',
+    url: '#',
+    icon: Heart,
+  },
+  {
+    title: 'Artistas',
+    url: '#',
+    icon: Mic2,
+  },
+  {
+    title: 'Álbumes',
+    url: '#',
+    icon: Music,
+  },
+];
+
+const playlists = [
+  'Mi Playlist #1',
+  'Favoritos 2024',
+  'Música para trabajar',
+  'Chill Vibes',
+  'Workout Mix',
 ];
 
 export function AppSidebar() {
   const { user } = useAuth();
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar variant="sidebar" collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link href="/">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Music className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Next Music Player</span>
+                  <span className="truncate text-xs">Tu música favorita</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Music Player</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
               {user?.role === 'admin' && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <a href="/upload" className="flex items-center flex-nowrap text-ellipsis">
+                    <Link href="/upload">
                       <Upload />
-                      Upload
-                    </a>
+                      <span>Upload</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Tu Biblioteca</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {libraryItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            Playlists
+            <Plus className="ml-auto h-4 w-4" />
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {playlists.map((playlist) => (
+                <SidebarMenuItem key={playlist}>
+                  <SidebarMenuButton asChild>
+                    <Link href="#">
+                      <Music />
+                      <span>{playlist}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
+
+      <SidebarRail />
       <AppSidebarFooter />
     </Sidebar>
   );
