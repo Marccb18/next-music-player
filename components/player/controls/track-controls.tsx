@@ -11,15 +11,10 @@ export function TrackControls() {
 
   return (
     <div className="flex items-center gap-2">
-      <Button
-        onClick={previous}
-        variant="ghost"
-        size="icon"
-        className="rounded-full"
-      >
+      <Button onClick={previous} variant="ghost" size="icon" className="rounded-full">
         <SkipBack className="w-5 h-5" />
       </Button>
-      
+
       <Button
         onClick={() => (isPlaying ? pause() : resume())}
         variant="ghost"
@@ -29,12 +24,7 @@ export function TrackControls() {
         {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
       </Button>
 
-      <Button
-        onClick={next}
-        variant="ghost"
-        size="icon"
-        className="rounded-full"
-      >
+      <Button onClick={next} variant="ghost" size="icon" className="rounded-full">
         <SkipForward className="w-5 h-5" />
       </Button>
     </div>

@@ -26,8 +26,10 @@ import {
 } from '@/components/primitives/dropdown-menu';
 import { Slider } from '@/components/primitives/slider';
 
-import { cn } from '@/lib/utils';
 import useAudioPlayer from '@/lib/services/audio-player';
+import { cn } from '@/lib/utils';
+
+import { QueueSheet } from './controls/queue-sheet';
 
 interface AudioPlayerProps {
   className?: string;
@@ -75,7 +77,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
         discNumber: 1,
       },
       {
-        id: '68339536d009874ae756522f',
+        id: 'asdfasdfasdf123',
         title: 'Dios #1 ft. MIKY WOODZ (Visualizer)',
         spotifyId: '5xP4rmVm5frtwOPwbmZNQw',
         artist: 'CRUZ CAFUNÉ',
@@ -119,7 +121,9 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-medium text-sm truncate">{currentSong?.title || 'Unknown Title'}</h3>
-          <p className="text-xs text-muted-foreground truncate">{currentSong?.artist || 'Unknown Artist'}</p>
+          <p className="text-xs text-muted-foreground truncate">
+            {currentSong?.artist || 'Unknown Artist'}
+          </p>
         </div>
       </div>
 
@@ -135,12 +139,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
             <Shuffle className="h-4 w-4" />
           </Button>
 
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8"
-            onClick={previous}
-          >
+          <Button variant="ghost" size="sm" className="h-8 w-8" onClick={previous}>
             <SkipBack className="h-4 w-4" />
           </Button>
 
@@ -156,12 +155,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
             )}
           </Button>
 
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8"
-            onClick={next}
-          >
+          <Button variant="ghost" size="sm" className="h-8 w-8" onClick={next}>
             <SkipForward className="h-4 w-4" />
           </Button>
 
@@ -196,10 +190,10 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
       {/* Controles de volumen y opciones */}
       <div className="flex items-center space-x-2 flex-1 justify-end">
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setVolume(volume === 0 ? 1 : 0)} 
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setVolume(volume === 0 ? 1 : 0)}
             className="h-8 w-8"
           >
             {volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -212,6 +206,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
             onValueChange={(value) => setVolume(value[0])}
           />
         </div>
+        <QueueSheet />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="h-8 w-8">

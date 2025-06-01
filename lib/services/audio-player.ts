@@ -87,7 +87,7 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
 
   play: (song) => {
     const state = get();
-    
+
     // Si no se proporciona una canción, intentar reproducir la actual
     if (!song && state.currentSong) {
       song = state.currentSong;
@@ -145,7 +145,7 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
           howl.once('unlock', () => {
             howl.play();
           });
-        }
+        },
       });
 
       // Encontrar el índice de la canción en la cola
@@ -212,7 +212,7 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
 
     // Calcular el índice de la canción anterior
     let prevIndex = state.currentIndex - 1;
-    
+
     // Manejar el caso cuando estamos en la primera canción
     if (prevIndex < 0) {
       if (state.repeatMode === 'all') {
@@ -239,11 +239,11 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
     }
 
     // Actualizar el estado y reproducir la nueva canción
-    set({ 
+    set({
       currentSong: prevSong,
       currentIndex: prevIndex,
       shouldAutoPlay: true,
-      howl: null // Forzar la creación de un nuevo Howl
+      howl: null, // Forzar la creación de un nuevo Howl
     });
 
     // Crear y reproducir la nueva canción
@@ -277,7 +277,7 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
         } else if (currentIndex < queue.length - 1) {
           get().next();
         }
-      }
+      },
     });
 
     set({ howl });
@@ -319,4 +319,4 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
   },
 }));
 
-export default useAudioPlayer; 
+export default useAudioPlayer;
