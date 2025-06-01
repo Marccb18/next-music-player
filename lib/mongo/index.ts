@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 export * from './models/Users';
 export * from './models/Groups';
+export * from './models/Playlists';
+export * from './models/Tracks';
+export * from './models/Genres';
+export * from './models/Releases';
+export * from './models/Artists';
 
 let isConnected = false;
 

@@ -16,10 +16,7 @@ import useAudioPlayer from '@/lib/services/audio-player';
 import { cn } from '@/lib/utils';
 
 export function QueueSheet() {
-  const { queue, currentSong, play, resume } = useAudioPlayer();
-  console.log('queue', queue);
-  console.log('currentSong', currentSong);
-
+  const { queue, currentSong, play } = useAudioPlayer();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -43,7 +40,6 @@ export function QueueSheet() {
                 )}
                 onClick={() => {
                   play(song);
-                  resume();
                 }}
               >
                 <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md">

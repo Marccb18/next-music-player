@@ -1,6 +1,6 @@
 'use client';
 
-import { useMediaStore } from '@vidstack/react';
+import useAudioPlayer from '@/lib/services/audio-player';
 
 function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
@@ -9,11 +9,11 @@ function formatTime(seconds: number): string {
 }
 
 export function TimeDisplay() {
-  const { currentTime, duration } = useMediaStore();
+  const { progress, duration } = useAudioPlayer();
 
   return (
     <div className="text-sm text-gray-600 dark:text-gray-400">
-      {formatTime(currentTime)} / {formatTime(duration)}
+      {formatTime(progress)} / {formatTime(duration)}
     </div>
   );
 }
