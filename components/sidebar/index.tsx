@@ -2,6 +2,8 @@
 
 import { Heart, Home, Library, Mic2, Music, Plus, Search, Upload } from 'lucide-react';
 
+import { useEffect } from 'react';
+
 import Link from 'next/link';
 
 import {
@@ -17,7 +19,9 @@ import {
   SidebarRail,
 } from '@/components/primitives/sidebar';
 
+import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { getPlaylists as getPlaylistsFromServer } from '@/lib/server-only/playlists/playlists.service';
 
 import { AppSidebarFooter } from './footer';
 
@@ -34,7 +38,7 @@ const navigationItems = [
   },
   {
     title: 'Tu Biblioteca',
-    url: '#',
+    url: '/library',
     icon: Library,
   },
 ];
@@ -57,16 +61,19 @@ const libraryItems = [
   },
 ];
 
-const playlists = [
-  'Mi Playlist #1',
-  'Favoritos 2024',
-  'Música para trabajar',
-  'Chill Vibes',
-  'Workout Mix',
-];
-
 export function AppSidebar() {
   const { user } = useAuth();
+  const { setPlaylists } = usePlaylistsStore();
+  const playlists = usePlaylistsStore((state) => state.playlists);
+
+  useEffect(() => {
+    if (user?._id) {
+      getPlaylistsFromServer(user._id).then((playlists) => {
+        setPlaylists(playlists);
+      });
+    }
+  }, [user?._id, setPlaylists]);
+
   return (
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader>
@@ -141,11 +148,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {playlists.map((playlist) => (
-                <SidebarMenuItem key={playlist}>
+                <SidebarMenuItem key={playlist.id}>
                   <SidebarMenuButton asChild>
                     <Link href="#">
                       <Music />
-                      <span>{playlist}</span>
+                      <span>{playlist.name}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

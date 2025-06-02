@@ -11,7 +11,7 @@ import {
   searchSpotifyAlbumBySong,
 } from '@/lib/server-only/spotify';
 
-import { UploadDrawer } from '../drawers/UploadDrawer';
+import { UploadDrawer } from '../drawers/upload-drawer';
 import {
   AlertDialog,
   AlertDialogAction,

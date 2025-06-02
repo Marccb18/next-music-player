@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
 import { connectMongo } from '@/lib/mongo';
 import { User } from '@/lib/mongo/models/Users';
 
