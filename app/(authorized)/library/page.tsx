@@ -68,11 +68,13 @@ export default function PlaylistsView() {
     return `${minutes}m`;
   };
 
-  const filteredPlaylists = playlists.filter(
-    (playlist) =>
-      playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      playlist.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPlaylists = playlists.filter((playlist) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      playlist.name.toLowerCase().includes(searchLower) ||
+      (playlist.description?.toLowerCase() || '').includes(searchLower)
+    );
+  });
 
   const handleCreatePlaylist = (data: { name: string; description: string; isPublic: boolean }) => {
     createPlaylist({

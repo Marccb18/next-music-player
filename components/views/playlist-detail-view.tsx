@@ -76,20 +76,16 @@ export function PlaylistDetailView({
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  const filteredTracks = React.useMemo(() => {
-    if (!Array.isArray(tracks)) return [];
-    return tracks.filter(
-      (track) =>
-        track.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        track.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        track.album.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTracks = tracks.filter((track) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      track.title.toLowerCase().includes(searchLower) ||
+      track.artist.toLowerCase().includes(searchLower) ||
+      track.album.toLowerCase().includes(searchLower)
     );
-  }, [tracks, searchQuery]);
+  });
 
-  const totalDuration = React.useMemo(() => {
-    if (!Array.isArray(tracks)) return 0;
-    return tracks.reduce((acc, track) => acc + track.duration, 0);
-  }, [tracks]);
+  const totalDuration = tracks.reduce((acc, track) => acc + track.duration, 0);
 
   React.useEffect(() => {
     let isMounted = true;
