@@ -150,7 +150,7 @@ export function AppSidebar() {
               {playlists.map((playlist) => (
                 <SidebarMenuItem key={playlist.id}>
                   <SidebarMenuButton asChild>
-                    <Link href="#">
+                    <Link href={`/library/playlist/${playlist.id}`}>
                       <Music />
                       <span>{playlist.name}</span>
                     </Link>

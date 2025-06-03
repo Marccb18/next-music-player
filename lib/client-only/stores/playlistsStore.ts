@@ -104,35 +104,23 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
 
   createPlaylist: async (playlist) => {
     const userId = useUserStore.getState().user?._id;
-    console.log('Creating playlist with userId:', userId);
-    if (!userId) {
-      console.log('No userId found');
-      return;
-    }
-
-    const newPlaylist = {
-      ...playlist,
-      id: crypto.randomUUID(),
-      songs: [],
-      totalSongs: 0,
-      totalDuration: 0,
-    };
-
-    console.log('New playlist:', newPlaylist);
-
-    set((state) => ({
-      playlists: [...state.playlists, newPlaylist],
-    }));
+    if (!userId) return;
 
     try {
-      console.log('Calling server to create playlist');
-      await createPlaylistServer(userId, playlist.name, playlist.description);
-      console.log('Playlist created successfully on server');
+      // Llama al backend para crear la playlist y espera la respuesta
+      const createdPlaylist = await createPlaylistServer(userId, playlist.name, playlist.description);
+
+      // Añade la playlist devuelta por el backend al estado local
+      set((state) => ({
+        playlists: [...state.playlists, {
+          ...createdPlaylist,
+          // Si el backend devuelve _id, pero tu frontend espera id:
+          id: createdPlaylist.id || createdPlaylist._id,
+        }],
+      }));
     } catch (error) {
       console.error('Error creating playlist:', error);
-      set((state) => ({
-        playlists: state.playlists.filter((p) => p.id !== newPlaylist.id),
-      }));
+      // Aquí podrías mostrar un mensaje de error si quieres
     }
   },
 
