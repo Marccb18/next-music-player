@@ -1,7 +1,9 @@
 'use client';
 
 import {
+  DiscAlbum,
   Heart,
+  Library,
   MoreHorizontal,
   Music,
   Music2,
@@ -16,7 +18,9 @@ import {
 } from 'lucide-react';
 
 import { useEffect } from 'react';
+import React from 'react';
 
+import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
 import { Button } from '@/components/primitives/button';
 import {
   DropdownMenu,
@@ -26,6 +30,7 @@ import {
 } from '@/components/primitives/dropdown-menu';
 import { Slider } from '@/components/primitives/slider';
 
+import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import useAudioPlayer from '@/lib/services/audio-player';
 import { cn } from '@/lib/utils';
 
@@ -93,6 +98,26 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
     useAudioPlayer.getState().setQueue(initialQueue);
     useAudioPlayer.getState().play(initialQueue[0]);
   }, []);
+
+  // Añadir estado para controlar el drawer
+  const [isAddToPlaylistOpen, setIsAddToPlaylistOpen] = React.useState(false);
+
+  // Función para manejar la adición a playlist
+  const handleAddToPlaylist = async (playlistId: string) => {
+    if (!currentSong) return;
+
+    const playlist = playlists.find((p) => p.id === playlistId);
+    if (!playlist) return;
+
+    try {
+      await usePlaylistsStore.getState().addSongToPlaylist(playlist, currentSong.id);
+      setIsAddToPlaylistOpen(false);
+    } catch (error) {
+      console.error('Error al añadir canción a la playlist:', error);
+    }
+  };
+
+  const { playlists } = usePlaylistsStore();
 
   return (
     <div
@@ -214,12 +239,27 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Añadir a playlist</DropdownMenuItem>
-            <DropdownMenuItem>Ver álbum</DropdownMenuItem>
-            <DropdownMenuItem>Compartir</DropdownMenuItem>
-            <DropdownMenuItem>Mostrar letra</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setIsAddToPlaylistOpen(true)}
+              className="flex gap-1 items-center"
+            >
+              <Library className="h-4 w-4" />
+              Añadir a playlist
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex gap-1 items-center">
+              <DiscAlbum className="h-4 w-4" />
+              Ver álbum
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Añadir el Drawer */}
+        <AddToPlaylistDrawer
+          open={isAddToPlaylistOpen}
+          onOpenChange={setIsAddToPlaylistOpen}
+          playlists={playlists}
+          onAddToPlaylist={handleAddToPlaylist}
+        />
       </div>
     </div>
   );

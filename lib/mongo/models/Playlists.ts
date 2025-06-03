@@ -8,12 +8,10 @@ const playlistSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String },
-    covers: [
-      {
-        type: String,
-        maxlength: 4,
-      },
-    ],
+    covers: {
+      type: [String],
+      maxlength: 4,
+    },
     owner: { type: objectId, ref: 'Users', required: true },
     isPublic: { type: Boolean, default: true },
     totalDuration: {

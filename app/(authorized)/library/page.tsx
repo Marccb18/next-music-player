@@ -254,10 +254,6 @@ export default function PlaylistsView() {
                           <Edit3 className="h-4 w-4 mr-2" />
                           Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                          <Share className="h-4 w-4 mr-2" />
-                          Compartir
-                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={(e) => {

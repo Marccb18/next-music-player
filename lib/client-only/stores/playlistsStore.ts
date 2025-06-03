@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import {
+  addSongToPlaylist as addSongToPlaylistServer,
   createPlaylist as createPlaylistServer,
   deletePlaylist as deletePlaylistServer,
   getPlaylists,
@@ -56,27 +57,28 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
     const userId = useUserStore.getState().user?._id;
     if (!userId) return;
 
-    set((state) => ({
-      playlists: state.playlists.map((p) => {
-        if (p.id === playlist.id) {
-          return {
-            ...p,
-            songs: [
-              ...(p.songs || []),
-              {
-                track: trackId,
-                position: (p.songs?.length || 0) + 1,
-                addedAt: new Date(),
-              },
-            ],
-            totalSongs: (p.totalSongs || 0) + 1,
-          };
-        }
-        return p;
-      }),
-    }));
+    try {
+      const updatedPlaylist = await addSongToPlaylistServer(userId, playlist.id, trackId);
+      if (!updatedPlaylist) throw new Error('No se pudo añadir la canción a la playlist');
 
-    // TODO: Implementar actualización en servidor
+      set((state) => ({
+        playlists: state.playlists.map((p) => {
+          if (p.id === playlist.id) {
+            return {
+              ...p,
+              songs: updatedPlaylist.songs,
+              totalSongs: updatedPlaylist.totalSongs,
+              totalDuration: updatedPlaylist.totalDuration,
+            };
+          }
+          return p;
+        }),
+      }));
+    } catch (error) {
+      console.error('Error al añadir canción a la playlist:', error);
+      // Recargar playlists del servidor para revertir cambios
+      get().loadPlaylists();
+    }
   },
 
   removeSongFromPlaylist: async (playlist, trackId) => {

@@ -5,7 +5,10 @@ import connectMongo, { Playlists } from '@/lib/mongo';
 connectMongo();
 
 export const getPlaylists = async (userId: string) => {
-  const playlists = await Playlists.find({ owner: userId });
+  const playlists = await Playlists.find({ owner: userId }).populate({
+    path: 'songs.track',
+    model: 'Tracks',
+  });
   return JSON.parse(JSON.stringify(playlists));
 };
 
@@ -50,7 +53,6 @@ export const addSongToPlaylist = async (userId: string, playlistId: string, trac
     position: playlist.songs.length + 1,
     addedAt: new Date(),
   });
-  playlist.totalSongs = playlist.songs.length;
   await playlist.save();
 
   return JSON.parse(JSON.stringify(playlist));
@@ -71,12 +73,14 @@ export const removeSongFromPlaylist = async (
   return JSON.parse(JSON.stringify(playlist));
 };
 
-export const getSongsFromPlaylist = async (playlistId: string) => {
-  try {
-    const playlists = await Playlists.findById(playlistId).select('songs').populate('songs');
-    return JSON.parse(JSON.stringify(playlists));
-  } catch (e: any) {
-    console.error('error: ', e.message);
-    return e;
-  }
+export const getPlaylistDetails = async (playlistId: string) => {
+  const playlist = await Playlists.findById(playlistId).populate({
+    path: 'songs.track',
+    model: 'Tracks',
+    populate: [
+      { path: 'album', model: 'Release' },
+      { path: 'artists', model: 'Artists' },
+    ],
+  });
+  return JSON.parse(JSON.stringify(playlist));
 };

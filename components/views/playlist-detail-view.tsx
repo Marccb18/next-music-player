@@ -29,16 +29,16 @@ import {
 } from '@/components/primitives/dropdown-menu';
 import { Input } from '@/components/primitives/input';
 
-import { getSongsFromPlaylist } from '@/lib/server-only/playlists/playlists.service';
+import { getPlaylistDetails } from '@/lib/server-only/playlists/playlists.service';
 import { cn } from '@/lib/utils';
 
 interface Track {
   id: string;
-  title: string;
-  artist: string;
-  album: string;
+  name: string;
   duration: number;
-  coverUrl: string;
+  image?: string;
+  album?: { name: string; cover?: string };
+  artists?: { name: string }[];
   isLiked?: boolean;
 }
 
@@ -72,50 +72,21 @@ export function PlaylistDetailView({
 }: PlaylistDetailViewProps) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [tracks, setTracks] = React.useState<Track[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const filteredTracks = tracks.filter((track) => {
+  const filteredTracks = playlist.tracks.filter((track) => {
     const searchLower = searchQuery.toLowerCase();
     return (
-      track.title.toLowerCase().includes(searchLower) ||
-      track.artist.toLowerCase().includes(searchLower) ||
-      track.album.toLowerCase().includes(searchLower)
+      (track.name?.toLowerCase() || '').includes(searchLower) ||
+      (
+        track.artists
+          ?.map((a) => a.name)
+          .join(', ')
+          .toLowerCase() || ''
+      ).includes(searchLower) ||
+      (track.album?.name?.toLowerCase() || '').includes(searchLower)
     );
   });
 
-  const totalDuration = tracks.reduce((acc, track) => acc + track.duration, 0);
-
-  React.useEffect(() => {
-    let isMounted = true;
-    
-    const loadTracks = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const loadedTracks = await getSongsFromPlaylist(playlist.id);
-        if (isMounted) {
-          setTracks(Array.isArray(loadedTracks) ? loadedTracks : []);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError('No se pudieron cargar las canciones de la playlist');
-          console.error('Error loading playlist tracks:', err);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadTracks();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [playlist.id]);
+  const totalDuration = playlist.tracks.reduce((acc, track) => acc + track.duration, 0);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -171,7 +142,7 @@ export function PlaylistDetailView({
                 <p className="text-lg text-muted-foreground mb-4">{playlist.description}</p>
               )}
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>{tracks.length} canciones</span>
+                <span>{playlist.tracks.length} canciones</span>
                 <span>•</span>
                 <span>{formatDuration(totalDuration)}</span>
                 <span>•</span>
@@ -190,11 +161,16 @@ export function PlaylistDetailView({
               size="lg"
               className="rounded-full h-14 w-14"
               onClick={() => setIsPlaying(!isPlaying)}
-              disabled={tracks.length === 0}
+              disabled={playlist.tracks.length === 0}
             >
               {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
             </Button>
-            <Button variant="outline" size="lg" className="gap-2" disabled={tracks.length === 0}>
+            <Button
+              variant="outline"
+              size="lg"
+              className="gap-2"
+              disabled={playlist.tracks.length === 0}
+            >
               <Shuffle className="h-4 w-4" />
               Aleatorio
             </Button>
@@ -238,32 +214,7 @@ export function PlaylistDetailView({
 
       {/* Lista de canciones */}
       <div className="px-6 py-4">
-        {error ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center">
-              <AlertTriangle className="h-12 w-12 text-destructive" />
-            </div>
-            <h2 className="text-2xl font-semibold mb-2">Error al cargar la playlist</h2>
-            <p className="text-muted-foreground mb-6">{error}</p>
-            <Button variant="outline" onClick={() => window.location.reload()}>
-              Intentar de nuevo
-            </Button>
-          </div>
-        ) : isLoading ? (
-          <div className="space-y-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-2">
-                <div className="w-6 h-6 bg-muted rounded animate-pulse" />
-                <div className="w-10 h-10 bg-muted rounded animate-pulse" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-muted rounded w-1/3 animate-pulse" />
-                  <div className="h-3 bg-muted rounded w-1/4 animate-pulse" />
-                </div>
-                <div className="w-12 h-4 bg-muted rounded animate-pulse" />
-              </div>
-            ))}
-          </div>
-        ) : tracks.length === 0 ? (
+        {playlist.tracks.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
               <Plus className="h-12 w-12 text-muted-foreground" />
@@ -318,18 +269,20 @@ export function PlaylistDetailView({
 
                 <div className="flex items-center gap-3 min-w-0">
                   <img
-                    src={track.coverUrl || '/placeholder.svg'}
-                    alt={track.title}
+                    src={track.image || '/placeholder.svg'}
+                    alt={track.name}
                     className="w-10 h-10 rounded object-cover"
                   />
                   <div className="min-w-0">
-                    <p className="font-medium truncate">{track.title}</p>
-                    <p className="text-sm text-muted-foreground truncate">{track.artist}</p>
+                    <p className="font-medium truncate">{track.name}</p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {track.artists?.map((a) => a.name).join(', ')}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center">
-                  <p className="text-sm text-muted-foreground truncate">{track.album}</p>
+                  <p className="text-sm text-muted-foreground truncate">{track.album?.name}</p>
                 </div>
 
                 <div className="flex items-center">

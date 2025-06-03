@@ -9,6 +9,7 @@ import { EditPlaylistDialog } from '@/components/dialogs/edit-playlist-dialog';
 import { PlaylistDetailView } from '@/components/views/playlist-detail-view';
 
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
+import { getPlaylistDetails } from '@/lib/server-only/playlists/playlists.service';
 
 export default function PlaylistDetailPage() {
   const params = useParams();
@@ -19,24 +20,39 @@ export default function PlaylistDetailPage() {
   const [deletingPlaylist, setDeletingPlaylist] = useState<any>(null);
 
   useEffect(() => {
-    const playlist = playlists.find((p) => p.id === params.id);
-    if (playlist) {
-      const cover = playlist.covers?.[0];
-      const isGradient = cover?.startsWith('linear-gradient');
-      const adaptedPlaylist = {
-        ...playlist,
-        trackCount: playlist.totalSongs,
-        duration: playlist.totalDuration,
-        coverUrl: !isGradient ? cover : undefined,
-        coverStyle: isGradient ? { background: cover } : undefined,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        tracks: playlist.songs || [],
-        isOwner: true,
-      };
-      setPlaylist(adaptedPlaylist);
-    }
-  }, [params.id, playlists]);
+    const loadPlaylistDetails = async () => {
+      const playlistDetails = await getPlaylistDetails(params.id as string);
+      if (playlistDetails) {
+        const cover = playlistDetails.covers?.[0];
+        const isGradient = cover?.startsWith('linear-gradient');
+        const adaptedPlaylist = {
+          ...playlistDetails,
+          trackCount: playlistDetails.totalSongs,
+          duration: playlistDetails.totalDuration,
+          coverUrl: !isGradient ? cover : undefined,
+          coverStyle: isGradient ? { background: cover } : undefined,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          tracks:
+            playlistDetails.songs?.map((song: any) => ({
+              id: song.track?._id,
+              name: song.track?.name,
+              duration: song.track?.duration,
+              image: song.track?.image,
+              album: {
+                name: song.track?.album?.name,
+                cover: song.track?.album?.cover,
+              },
+              artists: song.track?.artists?.map((a: any) => ({ name: a.name })),
+            })) || [],
+          isOwner: true,
+        };
+        setPlaylist(adaptedPlaylist);
+      }
+    };
+
+    loadPlaylistDetails();
+  }, [params.id]);
 
   const handleEditPlaylist = (data: { name: string; description: string; isPublic: boolean }) => {
     if (!playlist) return;

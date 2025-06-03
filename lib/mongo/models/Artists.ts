@@ -83,4 +83,4 @@ artistSchema.index({ spotifyId: 1 }, { unique: true });
 
 artistSchema.plugin(toJSON);
 
-export const Artist = mongoose.models.Artist || mongoose.model('Artist', artistSchema);
+export const Artists = mongoose.models.Artists || mongoose.model('Artists', artistSchema);
