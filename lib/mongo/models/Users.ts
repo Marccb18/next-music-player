@@ -24,6 +24,13 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.pre('save', function (next) {
+  this.avatar =
+    this.avatar ||
+    'https://avatar.iran.liara.run/public?username=' + this.name.toLowerCase().replace(' ', '');
+  next();
+});
+
 userSchema.plugin(toJSON);
 
 export const User = mongoose.models.User || mongoose.model('User', userSchema);

@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 import { DeletePlaylistDialog } from '@/components/dialogs/delete-playlist-dialog';
 import { EditPlaylistDialog } from '@/components/dialogs/edit-playlist-dialog';
-import { PlaylistDetailView } from '@/components/views/playlist-detail-view';
+import { PlaylistDetailView } from '@/components/views/playlist-detail-view/playlist-detail-view';
 
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { getPlaylistDetails } from '@/lib/server-only/playlists/playlists.service';
