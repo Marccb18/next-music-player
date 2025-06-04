@@ -1,6 +1,6 @@
 'use client';
 
-import useAudioPlayer from '@/lib/services/audio-player';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 
 function formatTime(seconds: number): string {
   const minutes = Math.floor(seconds / 60);

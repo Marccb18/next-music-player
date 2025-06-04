@@ -3,15 +3,16 @@ import { create } from 'zustand';
 
 export interface Song {
   id: string;
-  title: string;
-  artist: string;
-  album: string;
+  name: string;
+  artists: { id: string; name: string }[];
+  album?: { id: string; name: string };
   duration: number;
   url: string;
-  image: string;
+  image?: string;
   trackNumber: number;
   discNumber: number;
   spotifyId: string;
+  audioUrl?: string;
 }
 
 interface AudioPlayerState {
@@ -102,7 +103,7 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
 
       // Crear nuevo Howl
       const howl = new Howl({
-        src: [song.url],
+        src: [song.audioUrl || ''],
         html5: true,
         volume: state.volume,
         onload: () => {
@@ -248,7 +249,7 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
 
     // Crear y reproducir la nueva canción
     const howl = new Howl({
-      src: [prevSong.url],
+      src: [prevSong.audioUrl || ''],
       html5: true,
       volume: state.volume,
       onload: () => {

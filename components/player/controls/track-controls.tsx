@@ -4,7 +4,7 @@ import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 
 import { Button } from '@/components/primitives/button';
 
-import useAudioPlayer from '@/lib/services/audio-player';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 
 export function TrackControls() {
   const { isPlaying, next, previous, pause, resume } = useAudioPlayer();

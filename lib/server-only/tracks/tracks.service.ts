@@ -2,16 +2,9 @@
 
 import { Tracks } from '@/lib/mongo/models/Tracks';
 
-interface getTracksProps {
-  limit?: number;
-}
-
-export async function getTracks({ limit }: getTracksProps) {
-  const tracks = await Tracks.find(
-    {},
-    {
-      limit: limit,
-    }
-  );
-  return tracks;
+export async function getTracks() {
+  const tracks = await Tracks.find()
+    .populate('artists', 'name id')
+    .populate('album', 'name id');
+  return JSON.parse(JSON.stringify(tracks));
 }

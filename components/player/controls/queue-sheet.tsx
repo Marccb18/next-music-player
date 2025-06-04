@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from '@/components/primitives/sheet';
 
-import useAudioPlayer from '@/lib/services/audio-player';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 import { cn } from '@/lib/utils';
 
 export function QueueSheet() {
@@ -43,14 +43,19 @@ export function QueueSheet() {
                 }}
               >
                 <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md">
-                  <Image src={song.image} alt={song.title} fill className="object-cover" />
+                  <Image
+                    src={song.image || ''}
+                    alt={song.name}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <div className="flex flex-col items-start gap-1 flex-1 min-w-0">
                   <span className="font-medium line-clamp-1 text-ellipsis overflow-hidden w-full">
-                    {song.title}
+                    {song.name}
                   </span>
                   <span className="text-sm text-muted-foreground line-clamp-1 text-ellipsis overflow-hidden w-full">
-                    {song.artist}
+                    {song.artists?.[0]?.name}
                   </span>
                 </div>
                 {currentSong?.id === song.id && (

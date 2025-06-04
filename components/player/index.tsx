@@ -31,8 +31,9 @@ import {
 import { Slider } from '@/components/primitives/slider';
 
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
-import useAudioPlayer from '@/lib/services/audio-player';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 import { cn } from '@/lib/utils';
+import { getTracks } from '@/lib/server-only/tracks/tracks.service';
 
 import { QueueSheet } from './controls/queue-sheet';
 
@@ -66,37 +67,14 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
     seek,
   } = useAudioPlayer();
 
-  // Inicializar la cola con algunas canciones de prueba
   useEffect(() => {
-    const initialQueue = [
-      {
-        id: '68339536d009874ae756522f',
-        title: 'TURBO // Epifanía',
-        spotifyId: '04UsuCGu6llkgOldCUCgZo',
-        artist: 'CRUZ CAFUNÉ',
-        album: 'Me Muevo con Dios',
-        image: 'https://i.scdn.co/image/ab67616d0000b2734102f96ba4b1df4dfe8bc35f',
-        duration: 0,
-        url: 'https://next-music-player.s3.eu-west-3.amazonaws.com/tracks/7yvmtCjHcBe9DqIVl7AwQT/CRUZ CAFUNÉ - TURBO __ Epifanía [1Gug_Ezff0M].mp3',
-        trackNumber: 1,
-        discNumber: 1,
-      },
-      {
-        id: 'asdfasdfasdf123',
-        title: 'Dios #1 ft. MIKY WOODZ (Visualizer)',
-        spotifyId: '5xP4rmVm5frtwOPwbmZNQw',
-        artist: 'CRUZ CAFUNÉ',
-        album: 'Me Muevo con Dios',
-        image: 'https://i.scdn.co/image/ab67616d0000b2734102f96ba4b1df4dfe8bc35f',
-        duration: 0,
-        url: 'https://next-music-player.s3.eu-west-3.amazonaws.com/tracks/7yvmtCjHcBe9DqIVl7AwQT/CRUZ+CAFUN%C3%89+-+Fabiola+(Visualizer)+%5BtpX36GCFrPw%5D.mp3',
-        trackNumber: 2,
-        discNumber: 1,
-      },
-    ];
+    const loadInitialQueue = async () => {
+      const initialQueue = await getTracks();
+      useAudioPlayer.getState().setQueue(initialQueue);
+      useAudioPlayer.getState().play(initialQueue[0]);
+    };
 
-    useAudioPlayer.getState().setQueue(initialQueue);
-    useAudioPlayer.getState().play(initialQueue[0]);
+    loadInitialQueue();
   }, []);
 
   // Añadir estado para controlar el drawer
@@ -133,7 +111,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
             <>
               <img
                 src={currentSong.image}
-                alt={`${currentSong.title} cover`}
+                alt={`${currentSong.name} cover`}
                 className="w-12 h-12 rounded-lg object-cover shadow-sm"
               />
               <div className="absolute inset-0 bg-black/20 rounded-lg" />
@@ -145,9 +123,9 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-medium text-sm truncate">{currentSong?.title || 'Unknown Title'}</h3>
+          <h3 className="font-medium text-sm truncate">{currentSong?.name || 'Unknown Title'}</h3>
           <p className="text-xs text-muted-foreground truncate">
-            {currentSong?.artist || 'Unknown Artist'}
+            {currentSong?.artists?.[0]?.name || 'Unknown Artist'}
           </p>
         </div>
       </div>

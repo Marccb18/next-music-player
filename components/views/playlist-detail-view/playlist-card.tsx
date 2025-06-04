@@ -14,6 +14,7 @@ import {
 } from '@/components/primitives/dropdown-menu';
 
 import { Playlist } from '@/lib/types/playlist';
+import { useFormat } from '@/hooks/use-format';
 
 interface PlaylistCardProps {
   playlist: Playlist;
@@ -21,17 +22,9 @@ interface PlaylistCardProps {
   onDelete: (playlist: Playlist) => void;
 }
 
-const formatDuration = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-  return `${minutes}m`;
-};
-
 export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) {
   const router = useRouter();
+  const { formatDuration } = useFormat();
 
   const handlePlaylistClick = () => {
     router.push(`/library/playlist/${playlist.id}`);

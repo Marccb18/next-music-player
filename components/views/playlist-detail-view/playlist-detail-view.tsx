@@ -31,6 +31,7 @@ import { Input } from '@/components/primitives/input';
 
 import { getPlaylistDetails } from '@/lib/server-only/playlists/playlists.service';
 import { cn } from '@/lib/utils';
+import { useFormat } from '@/hooks/use-format';
 
 interface Track {
   id: string;
@@ -72,6 +73,7 @@ export function PlaylistDetailView({
 }: PlaylistDetailViewProps) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const { formatTime, formatDuration, formatDate } = useFormat();
   const filteredTracks = playlist.tracks.filter((track) => {
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -87,21 +89,6 @@ export function PlaylistDetailView({
   });
 
   const totalDuration = playlist.tracks.reduce((acc, track) => acc + track.duration, 0);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const formatDuration = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
-  };
 
   return (
     <div className="flex-1">
@@ -146,7 +133,7 @@ export function PlaylistDetailView({
                 <span>•</span>
                 <span>{formatDuration(totalDuration)}</span>
                 <span>•</span>
-                <span>Actualizada {playlist.updatedAt.toLocaleDateString()}</span>
+                <span>Actualizada {formatDate(playlist.updatedAt)}</span>
               </div>
             </div>
           </div>
