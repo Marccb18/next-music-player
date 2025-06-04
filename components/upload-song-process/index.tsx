@@ -111,8 +111,8 @@ export default function SpotifyUploader() {
 
       setTrackFiles((prev) =>
         prev.map((trackFile) =>
-          trackFile.trackId === selectedTrackForUpload 
-            ? { ...trackFile, file: file, duration } 
+          trackFile.trackId === selectedTrackForUpload
+            ? { ...trackFile, file: file, duration }
             : trackFile
         )
       );

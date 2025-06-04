@@ -71,6 +71,10 @@ const releaseSchema = new mongoose.Schema(
     releaseGroup: {
       type: String,
     },
+    totalDuration: {
+      type: Number,
+      default: 0,
+    },
     _createdAt: {
       type: Date,
       default: Date.now,
@@ -90,12 +94,25 @@ const releaseSchema = new mongoose.Schema(
   }
 );
 
-// Índices
 releaseSchema.index({ name: 'text' });
 releaseSchema.index({ spotifyId: 1 }, { unique: true });
 releaseSchema.index({ releaseDate: -1 });
 releaseSchema.index({ popularity: -1 });
 
 releaseSchema.plugin(toJSON);
+
+releaseSchema.pre(['save', 'updateOne'], async function (this: any, next) {
+  try {
+    if (this.tracks && this.tracks.length > 0) {
+      const tracks = await mongoose.model('Tracks').find({ _id: { $in: this.tracks } });
+      this.totalDuration = tracks.reduce((total, track) => total + track.duration, 0);
+    } else {
+      this.totalDuration = 0;
+    }
+    next();
+  } catch (error: any) {
+    next(error);
+  }
+});
 
 export const Release = mongoose.models.Release || mongoose.model('Release', releaseSchema);

@@ -107,3 +107,76 @@ export async function createTrack(trackData: TrackData) {
     };
   }
 }
+
+export const getReleases = async ({ search }: { search?: string } = {}) => {
+  try {
+    await connectMongo();
+
+    const query = search ? { name: { $regex: search, $options: 'i' } } : {};
+    const releases = await Release.find(query)
+      .select('name artists cover releaseDate type totalTracks totalDuration id')
+      .populate('artists', 'name id');
+
+    console.log('releases',releases);
+    return JSON.parse(JSON.stringify(releases));
+  } catch (error) {
+    console.error('Error al obtener los álbumes:', error);
+    throw error;
+  }
+};
+
+export const getReleaseById = async (id: string) => {
+  try {
+    await connectMongo();
+
+    const release = await Release.findById(id)
+      .populate('artists', 'name id')
+      .populate({
+        path: 'tracks',
+        populate: {
+          path: 'artists',
+          select: 'name id',
+        },
+      });
+
+    if (!release) {
+      throw new Error('Álbum no encontrado');
+    }
+
+    // Convertir el documento de Mongoose a un objeto plano
+    const releaseObject = release.toObject();
+    
+    // Asegurarnos de que las fechas se serialicen correctamente
+    if (releaseObject.releaseDate) {
+      releaseObject.releaseDate = new Date(releaseObject.releaseDate);
+    }
+
+    // Asegurarnos de que los tracks se serialicen correctamente
+    if (releaseObject.tracks) {
+      releaseObject.tracks = releaseObject.tracks.map((track: any) => ({
+        id: track._id.toString(),
+        name: track.name,
+        spotifyId: track.spotifyId,
+        artists: track.artists.map((artist: any) => ({
+          id: artist._id.toString(),
+          name: artist.name,
+        })),
+        album: track.album ? {
+          id: track.album._id.toString(),
+          name: track.album.name,
+        } : undefined,
+        duration: track.duration,
+        trackNumber: track.trackNumber,
+        isExplicit: track.isExplicit,
+        image: track.image,
+        audioUrl: track.audioUrl,
+        fileName: track.fileName,
+      }));
+    }
+
+    return releaseObject;
+  } catch (error) {
+    console.error('Error al obtener el álbum:', error);
+    throw error;
+  }
+};

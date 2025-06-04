@@ -204,7 +204,7 @@ async function getTrackGenres(trackId: string, token: string): Promise<string[]>
       Authorization: `Bearer ${token}`,
     },
   });
-  
+
   // Obtener los géneros de los artistas de la pista
   const artistGenres = await Promise.all(
     response.data.artists.map(async (artist: SpotifyArtist) => {
@@ -212,7 +212,7 @@ async function getTrackGenres(trackId: string, token: string): Promise<string[]>
       return genres;
     })
   );
-  
+
   // Combinar y eliminar duplicados
   return [...new Set(artistGenres.flat())];
 }
@@ -342,7 +342,7 @@ async function createOrUpdateReleaseWithFiles(
 
         // Obtener géneros de la pista
         const trackGenres = await getTrackGenres(spotifyTrack.id, token);
-        
+
         // Crear o actualizar géneros de la pista
         const trackGenreIds = await Promise.all(
           trackGenres.map(async (genreName) => {
@@ -398,24 +398,24 @@ async function createOrUpdateReleaseWithFiles(
         if (track) {
           track = await Tracks.findOneAndUpdate(
             { spotifyId: spotifyTrack.id },
-            { 
+            {
               $set: {
                 ...trackData,
-                genres: validGenreIds
-              }
+                genres: validGenreIds,
+              },
             },
             { session, new: true }
           );
           return track.id;
         } else {
           const [newTrack] = await Tracks.create([trackData], { session });
-          
+
           await Genre.updateMany(
             { _id: { $in: validGenreIds } },
             { $addToSet: { tracks: newTrack.id } },
             { session }
           );
-          
+
           return newTrack.id;
         }
       });

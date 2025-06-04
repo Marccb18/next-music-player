@@ -33,7 +33,7 @@ const navigationItems = [
   },
   {
     title: 'Buscar',
-    url: '#',
+    url: '/albums',
     icon: Search,
   },
   {
