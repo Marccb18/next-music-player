@@ -1,4 +1,5 @@
 import { Music, Plus } from 'lucide-react';
+
 import { Button } from '@/components/primitives/button';
 
 interface EmptyStateProps {
@@ -13,8 +14,8 @@ export function EmptyState({ onCreateClick }: EmptyStateProps) {
       </div>
       <h2 className="text-2xl font-semibold mb-2">Tu biblioteca está vacía</h2>
       <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-        Las playlists te ayudan a organizar tu música. Crea una para empezar a guardar tus
-        canciones favoritas y acceder a ellas fácilmente.
+        Las playlists te ayudan a organizar tu música. Crea una para empezar a guardar tus canciones
+        favoritas y acceder a ellas fácilmente.
       </p>
       <Button onClick={onCreateClick} size="lg" className="gap-2">
         <Plus className="h-5 w-5" />
@@ -22,4 +23,4 @@ export function EmptyState({ onCreateClick }: EmptyStateProps) {
       </Button>
     </div>
   );
-} 
+}

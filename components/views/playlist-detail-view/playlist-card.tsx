@@ -1,5 +1,7 @@
 import { Clock, Edit3, Globe, Lock, MoreHorizontal, Music, Play, Trash2 } from 'lucide-react';
+
 import { useRouter } from 'next/navigation';
+
 import { Badge } from '@/components/primitives/badge';
 import { Button } from '@/components/primitives/button';
 import { Card, CardContent, CardHeader } from '@/components/primitives/card';
@@ -10,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/primitives/dropdown-menu';
+
 import { Playlist } from '@/lib/types/playlist';
 
 interface PlaylistCardProps {
@@ -124,9 +127,7 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
         </div>
 
         {playlist.description && (
-          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-            {playlist.description}
-          </p>
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{playlist.description}</p>
         )}
 
         <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -142,15 +143,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
           </div>
 
           <div className="flex items-center gap-1">
-            {playlist.isPublic ? (
-              <Globe className="h-3 w-3" />
-            ) : (
-              <Lock className="h-3 w-3" />
-            )}
-            <Badge
-              variant={playlist.isPublic ? 'default' : 'secondary'}
-              className="text-xs"
-            >
+            {playlist.isPublic ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+            <Badge variant={playlist.isPublic ? 'default' : 'secondary'} className="text-xs">
               {playlist.isPublic ? 'Pública' : 'Privada'}
             </Badge>
           </div>
@@ -158,4 +152,4 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
       </CardContent>
     </Card>
   );
-} 
+}

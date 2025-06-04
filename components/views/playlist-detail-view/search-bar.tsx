@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react';
+
 import { Input } from '@/components/primitives/input';
 
 interface SearchBarProps {
@@ -19,4 +20,4 @@ export function SearchBar({ value, onChange, placeholder = 'Buscar...' }: Search
       />
     </div>
   );
-} 
+}

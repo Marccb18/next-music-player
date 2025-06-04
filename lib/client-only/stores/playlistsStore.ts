@@ -108,15 +108,22 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
 
     try {
       // Llama al backend para crear la playlist y espera la respuesta
-      const createdPlaylist = await createPlaylistServer(userId, playlist.name, playlist.description);
+      const createdPlaylist = await createPlaylistServer(
+        userId,
+        playlist.name,
+        playlist.description
+      );
 
       // Añade la playlist devuelta por el backend al estado local
       set((state) => ({
-        playlists: [...state.playlists, {
-          ...createdPlaylist,
-          // Si el backend devuelve _id, pero tu frontend espera id:
-          id: createdPlaylist.id || createdPlaylist._id,
-        }],
+        playlists: [
+          ...state.playlists,
+          {
+            ...createdPlaylist,
+            // Si el backend devuelve _id, pero tu frontend espera id:
+            id: createdPlaylist.id || createdPlaylist._id,
+          },
+        ],
       }));
     } catch (error) {
       console.error('Error creating playlist:', error);

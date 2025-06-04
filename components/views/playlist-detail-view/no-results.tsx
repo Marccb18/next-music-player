@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react';
+
 import { Button } from '@/components/primitives/button';
 
 interface NoResultsProps {
@@ -21,4 +22,4 @@ export function NoResults({ searchQuery, onClearSearch }: NoResultsProps) {
       </Button>
     </div>
   );
-} 
+}
