@@ -20,4 +20,5 @@ export interface SpotifyRelease {
 export interface TrackFile {
   trackId: string;
   file: File | null;
+  duration?: number;
 }

@@ -94,15 +94,26 @@ export default function SpotifyUploader() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || !selectedTrackForUpload) return;
 
     const file = files[0];
     if (file && (file.type === 'audio/mp3' || file.type === 'audio/mpeg')) {
+      // Obtener la duración del archivo de audio
+      const duration = await new Promise<number>((resolve) => {
+        const audio = new Audio();
+        audio.addEventListener('loadedmetadata', () => {
+          resolve(Math.round(audio.duration * 1000)); // Convertir a milisegundos
+        });
+        audio.src = URL.createObjectURL(file);
+      });
+
       setTrackFiles((prev) =>
         prev.map((trackFile) =>
-          trackFile.trackId === selectedTrackForUpload ? { ...trackFile, file: file } : trackFile
+          trackFile.trackId === selectedTrackForUpload 
+            ? { ...trackFile, file: file, duration } 
+            : trackFile
         )
       );
       setIsDrawerOpen(false);
@@ -151,6 +162,7 @@ export default function SpotifyUploader() {
               trackId: tf.trackId,
               audioUrl,
               fileName: file.name,
+              duration: tf.duration || 0,
             };
           })
       );

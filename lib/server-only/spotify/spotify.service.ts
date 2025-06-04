@@ -122,6 +122,7 @@ interface UploadedTrack {
   trackId: string;
   audioUrl: string;
   fileName: string;
+  duration: number;
 }
 
 function transformSpotifyReleaseToAlbum(release: SpotifyRelease): SpotifyAlbumWithTracks {
@@ -366,7 +367,7 @@ async function createOrUpdateReleaseWithFiles(
           url:
             spotifyTrack.external_urls.spotify ||
             `https://open.spotify.com/track/${spotifyTrack.id}`,
-          duration: spotifyTrack.duration_ms || 0,
+          duration: uploadedTrack?.duration || 0,
           trackNumber: spotifyTrack.track_number,
           discNumber: spotifyTrack.disc_number,
           isExplicit: spotifyTrack.explicit,
@@ -380,8 +381,10 @@ async function createOrUpdateReleaseWithFiles(
           track = await Tracks.findOneAndUpdate(
             { spotifyId: spotifyTrack.id },
             { 
-              $set: trackData,
-              $addToSet: { genres: { $each: trackGenreIds } }
+              $set: {
+                ...trackData,
+                genres: trackGenreIds
+              }
             },
             { session, new: true }
           );
