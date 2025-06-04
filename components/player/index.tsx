@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { getTracks } from '@/lib/server-only/tracks/tracks.service';
 
 import { QueueSheet } from './controls/queue-sheet';
+import { useRouter } from 'next/navigation';
 
 interface AudioPlayerProps {
   className?: string;
@@ -66,7 +67,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
     toggleShuffle,
     seek,
   } = useAudioPlayer();
-
+  const router = useRouter();
   useEffect(() => {
     const loadInitialQueue = async () => {
       const initialQueue = await getTracks();
@@ -224,7 +225,12 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
               <Library className="h-4 w-4" />
               Añadir a playlist
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex gap-1 items-center">
+            <DropdownMenuItem
+              className="flex gap-1 items-center"
+              onClick={() => {
+                router.push(`/albums/${currentSong?.album?.id}`);
+              }}
+            >
               <DiscAlbum className="h-4 w-4" />
               Ver álbum
             </DropdownMenuItem>
