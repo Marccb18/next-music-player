@@ -5,15 +5,15 @@ import { create } from 'zustand';
 export interface Song {
   id: string;
   name: string;
+  spotifyId: string;
   artists: { id: string; name: string }[];
   album?: { id: string; name: string };
   duration: number;
-  url: string;
-  image?: string;
   trackNumber: number;
-  discNumber: number;
-  spotifyId: string;
+  isExplicit: boolean;
+  image?: string;
   audioUrl?: string;
+  fileName?: string;
 }
 
 interface AudioPlayerState {
@@ -328,12 +328,17 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
   reproduceShuffleAlbum: async (tracks: Song[] | string[]) => {
     if (Array.isArray(tracks) && tracks.length > 0 && typeof tracks[0] === 'string') {
       const loadedTracks = await getTracksByIds(tracks as string[]);
-      set({ queue: loadedTracks as Song[], shouldAutoPlay: true });
+      set({ queue: loadedTracks as Song[], shouldAutoPlay: true, isShuffled: true });
+      // Mezclar la cola antes de reproducir
+      get().toggleShuffle();
       get().play(loadedTracks[0] as Song);
       return;
     }
-    set({ queue: tracks as Song[], shouldAutoPlay: true });
-    get().play(tracks[0] as Song);
+    set({ queue: tracks as Song[], shouldAutoPlay: true, isShuffled: true });
+    // Mezclar la cola antes de reproducir
+    get().toggleShuffle();
+    get().toggleShuffle();
+    get().play(get().queue[0] as Song);
   },
 
   seek: (time) => {

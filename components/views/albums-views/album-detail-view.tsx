@@ -29,6 +29,7 @@ import {
 import { EmptyState } from '@/components/primitives/empty-state';
 import { Input } from '@/components/primitives/input';
 import { TrackList } from '@/components/views/albums-views/track-list';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 
 import type { Album, Track } from '@/lib/types/music';
 import { cn } from '@/lib/utils';
@@ -40,10 +41,9 @@ interface AlbumDetailViewProps {
 
 export function AlbumDetailView({ album, onBack }: AlbumDetailViewProps) {
   const { formatDuration, formatDate } = useFormat();
-  const [isPlaying, setIsPlaying] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isLiked, setIsLiked] = React.useState(false);
-
+  const { reproduceAlbum, reproduceShuffleAlbum, queue, play, pause, isPlaying } = useAudioPlayer();
   const filteredTracks = React.useMemo(() => {
     return album.tracks.filter(
       (track) =>
@@ -117,11 +117,22 @@ export function AlbumDetailView({ album, onBack }: AlbumDetailViewProps) {
             <Button
               size="lg"
               className="rounded-full h-14 w-14"
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={() => {
+                if (queue === album.tracks && isPlaying) {
+                  pause();
+                } else {
+                  reproduceAlbum(album.tracks);
+                }
+              }}
             >
-              {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
+              {isPlaying && queue === album.tracks ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
             </Button>
-            <Button variant="outline" size="lg" className="gap-2">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="gap-2"
+              onClick={() => reproduceShuffleAlbum(album.tracks)}
+            >
               <Shuffle className="h-4 w-4" />
               Aleatorio
             </Button>
