@@ -33,6 +33,7 @@ export default function AlbumsPage() {
           totalTracks: release.totalTracks || 0,
           totalDuration: release.totalDuration || 0,
           type: release.type || 'album',
+          tracks: release.tracks || [],
         }));
 
         setAlbums(transformedAlbums);

@@ -31,7 +31,7 @@ type PlaylistsState = {
 
   // ACTIONS
   setPlaylists: (playlists: Playlist[]) => void;
-  addSongToPlaylist: (playlist: Playlist, trackId: string) => Promise<void>;
+  addSongToPlaylist: (playlist: Playlist, trackIds: string | string[]) => Promise<void>;
   removeSongFromPlaylist: (playlist: Playlist, trackId: string) => Promise<void>;
   createPlaylist: (playlist: Omit<Playlist, 'id'>) => Promise<void>;
   updatePlaylist: (playlist: Playlist) => Promise<void>;
@@ -53,13 +53,18 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
     set({ playlists });
   },
 
-  addSongToPlaylist: async (playlist, trackId) => {
+  addSongToPlaylist: async (playlist, trackIds) => {
     const userId = useUserStore.getState().user?._id;
-    if (!userId) return;
+    if (!userId) {
+      console.error('No hay usuario autenticado');
+      return;
+    }
 
     try {
-      const updatedPlaylist = await addSongToPlaylistServer(userId, playlist.id, trackId);
-      if (!updatedPlaylist) throw new Error('No se pudo añadir la canción a la playlist');
+      const updatedPlaylist = await addSongToPlaylistServer(userId, playlist.id, trackIds);
+      if (!updatedPlaylist) {
+        throw new Error('No se pudo añadir la(s) canción(es) a la playlist');
+      }
 
       set((state) => ({
         playlists: state.playlists.map((p) => {
@@ -74,8 +79,10 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
           return p;
         }),
       }));
+
+      console.log('Playlist actualizada exitosamente:', updatedPlaylist);
     } catch (error) {
-      console.error('Error al añadir canción a la playlist:', error);
+      console.error('Error al añadir canción(es) a la playlist:', error);
       // Recargar playlists del servidor para revertir cambios
       get().loadPlaylists();
     }

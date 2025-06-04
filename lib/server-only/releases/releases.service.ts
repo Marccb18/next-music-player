@@ -114,7 +114,7 @@ export const getReleases = async ({ search }: { search?: string } = {}) => {
 
     const query = search ? { name: { $regex: search, $options: 'i' } } : {};
     const releases = await Release.find(query)
-      .select('name artists cover releaseDate type totalTracks totalDuration id')
+      .select('name artists tracks cover releaseDate type totalTracks totalDuration id')
       .populate('artists', 'name id');
 
     console.log('releases',releases);

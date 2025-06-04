@@ -41,4 +41,5 @@ export type Release = {
   totalTracks?: number;
   totalDuration?: number;
   type?: string;
+  tracks: string[] | Track[];
 };
