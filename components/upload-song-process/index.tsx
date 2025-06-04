@@ -10,18 +10,9 @@ import {
   createOrUpdateReleaseWithFiles,
   searchSpotifyAlbumBySong,
 } from '@/lib/server-only/spotify';
+import { useAlertDialogStore } from '@/lib/client-only/stores/alertDialogStore';
 
 import { UploadDrawer } from '../drawers/upload-drawer';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../primitives/alert-dialog';
 import { Step1Search } from './steps/Step1Search';
 import { Step2Preview } from './steps/Step2Preview';
 import { Step3Upload } from './steps/Step3Upload';
@@ -36,8 +27,8 @@ export default function SpotifyUploader() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedTrackForUpload, setSelectedTrackForUpload] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const alertDialog = useAlertDialogStore();
 
   const searchSpotifyRelease = async () => {
     if (!releaseName || !artistName) return;
@@ -141,13 +132,18 @@ export default function SpotifyUploader() {
   };
 
   const handleComplete = () => {
-    setIsConfirmDialogOpen(true);
+    alertDialog.open({
+      title: 'Confirmar importación',
+      description: `Estás a punto de importar ${trackFiles.filter((tf) => tf.file !== null).length} de ${spotifyData?.totalTracks} canciones. ¿Estás seguro de que deseas continuar con la importación?`,
+      onContinue: handleConfirmComplete,
+      onCancel: () => alertDialog.close()
+    });
   };
 
   const handleConfirmComplete = async () => {
     if (!spotifyData) return;
 
-    setIsSubmitting(true);
+    alertDialog.setLoading(true);
     try {
       // Subir archivos a S3 y obtener sus URLs
       const uploadedTracks = await Promise.all(
@@ -177,12 +173,12 @@ export default function SpotifyUploader() {
       setArtistName('');
       setSpotifyData(null);
       setTrackFiles([]);
-      setIsConfirmDialogOpen(false);
+      alertDialog.close();
     } catch (error) {
       console.error('Error al importar el lanzamiento:', error);
       toast.error('Error al importar el lanzamiento');
     } finally {
-      setIsSubmitting(false);
+      alertDialog.setLoading(false);
     }
   };
 
@@ -280,33 +276,6 @@ export default function SpotifyUploader() {
           selectedTrackName={getSelectedTrackName()}
           onFileUpload={handleFileUpload}
         />
-
-        {/* Confirmation Dialog */}
-        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar importación</AlertDialogTitle>
-              <AlertDialogDescription>
-                Estás a punto de importar {trackFiles.filter((tf) => tf.file !== null).length} de{' '}
-                {spotifyData?.totalTracks} canciones. ¿Estás seguro de que deseas continuar con la
-                importación?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isSubmitting}>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmComplete} disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Importando...
-                  </>
-                ) : (
-                  'Continuar'
-                )}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </div>
   );

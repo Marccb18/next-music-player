@@ -66,7 +66,7 @@ export default function AlbumsPage() {
             <h1 className="text-4xl font-bold mb-2">Álbumes</h1>
             <p className="text-muted-foreground">
               {albums.length > 0
-                ? `${albums.length} álbumes en tu biblioteca`
+                ? `${albums.length} álbumes en la biblioteca`
                 : 'Explora nuevos álbumes'}
             </p>
           </div>
@@ -98,8 +98,8 @@ export default function AlbumsPage() {
         {!isLoading && albums.length === 0 && (
           <EmptyState
             icon={<Disc className="h-12 w-12 text-muted-foreground" />}
-            title="No hay álbumes en tu biblioteca"
-            description="Explora y añade álbumes a tu biblioteca para verlos aquí."
+            title="No hay álbumes en la biblioteca"
+            description="Explora y añade álbumes a la biblioteca para verlos aquí."
             actionLabel="Explorar música"
             actionHref="/search"
           />

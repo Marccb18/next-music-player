@@ -18,6 +18,7 @@ import type { Album } from '@/lib/types/music';
 import { cn } from '@/lib/utils';
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 
 interface AlbumCardProps {
   album: Album;
@@ -25,10 +26,11 @@ interface AlbumCardProps {
 }
 
 export function AlbumCard({ album, onClick }: AlbumCardProps) {
-  const { formatDuration, formatYear } = useFormat();
+  const { formatYear } = useFormat();
   const [isLiked, setIsLiked] = React.useState(false);
   const [isAddToPlaylistOpen, setIsAddToPlaylistOpen] = React.useState(false);
   const { playlists, addSongToPlaylist } = usePlaylistsStore();
+  const { reproduceAlbum } = useAudioPlayer();
 
   const handleLikeToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -85,7 +87,10 @@ export function AlbumCard({ album, onClick }: AlbumCardProps) {
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
 
             <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <Button size="sm" className="rounded-full h-12 w-12 shadow-lg">
+              <Button size="sm" className="rounded-full h-12 w-12 shadow-lg" onClick={(e) => {
+                e.stopPropagation();
+                reproduceAlbum(album.tracks.map(track => typeof track === 'string' ? track : track.id));
+              }}>
                 <Play className="h-5 w-5 ml-0.5" />
               </Button>
             </div>

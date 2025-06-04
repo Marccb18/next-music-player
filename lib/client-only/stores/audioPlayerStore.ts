@@ -1,3 +1,4 @@
+import { getTracks, getTracksByIds } from '@/lib/server-only/tracks/tracks.service';
 import { Howl } from 'howler';
 import { create } from 'zustand';
 
@@ -41,6 +42,8 @@ interface AudioPlayerActions {
   previous: () => void;
   setVolume: (volume: number) => void;
   setRepeatMode: (mode: 'off' | 'all' | 'one') => void;
+  reproduceAlbum: (tracks: Song[] | string[]) => void;
+  reproduceShuffleAlbum: (tracks: Song[] | string[]) => void;
   toggleShuffle: () => void;
   seek: (time: number) => void;
 }
@@ -310,6 +313,28 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
         };
       }
     }),
+
+  reproduceAlbum: async (tracks: Song[] | string[]) => {
+    if (Array.isArray(tracks) && tracks.length > 0 && typeof tracks[0] === 'string') {
+      const loadedTracks = await getTracksByIds(tracks as string[]);
+      set({ queue: loadedTracks as Song[], shouldAutoPlay: true });
+      get().play(loadedTracks[0] as Song);
+      return;
+    }
+    set({ queue: tracks as Song[], shouldAutoPlay: true });
+    get().play(tracks[0] as Song);
+  },
+
+  reproduceShuffleAlbum: async (tracks: Song[] | string[]) => {
+    if (Array.isArray(tracks) && tracks.length > 0 && typeof tracks[0] === 'string') {
+      const loadedTracks = await getTracksByIds(tracks as string[]);
+      set({ queue: loadedTracks as Song[], shouldAutoPlay: true });
+      get().play(loadedTracks[0] as Song);
+      return;
+    }
+    set({ queue: tracks as Song[], shouldAutoPlay: true });
+    get().play(tracks[0] as Song);
+  },
 
   seek: (time) => {
     const { howl } = get();
