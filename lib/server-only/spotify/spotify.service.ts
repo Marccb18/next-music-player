@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import { SpotifyRelease } from '@/components/upload-song-process/types';
 
 import connectMongo from '@/lib/mongo';
-import { Artist } from '@/lib/mongo/models/Artists';
+import { Artists } from '@/lib/mongo/models/Artists';
 import { Genre } from '@/lib/mongo/models/Genres';
 import { Release } from '@/lib/mongo/models/Releases';
 import { Tracks } from '@/lib/mongo/models/Tracks';
@@ -145,7 +145,7 @@ function transformSpotifyReleaseToAlbum(release: SpotifyRelease): SpotifyAlbumWi
     tracks: release.tracks.map((track) => ({
       id: track.id,
       name: track.name,
-      duration_ms: 0,
+      duration_ms: Number(track.duration) || 0,
       track_number: track.trackNumber,
       disc_number: 1,
       explicit: false,
@@ -197,6 +197,25 @@ function transformSpotifyReleaseToAlbum(release: SpotifyRelease): SpotifyAlbumWi
   };
 }
 
+async function getTrackGenres(trackId: string, token: string): Promise<string[]> {
+  const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  
+  // Obtener los géneros de los artistas de la pista
+  const artistGenres = await Promise.all(
+    response.data.artists.map(async (artist: SpotifyArtist) => {
+      const genres = await getArtistGenres(artist.id, token);
+      return genres;
+    })
+  );
+  
+  // Combinar y eliminar duplicados
+  return [...new Set(artistGenres.flat())];
+}
+
 async function createOrUpdateReleaseWithFiles(
   spotifyAlbum: SpotifyAlbumWithTracks | SpotifyRelease,
   uploadedTracks: UploadedTrack[]
@@ -215,7 +234,7 @@ async function createOrUpdateReleaseWithFiles(
     const artistIds = await Promise.all(
       album.artists.map(async (spotifyArtist) => {
         // Buscar artista existente
-        let artist = await Artist.findOne({ spotifyId: spotifyArtist.id });
+        let artist = await Artists.findOne({ spotifyId: spotifyArtist.id });
 
         // Obtener géneros del artista desde Spotify
         const artistGenres = await getArtistGenres(spotifyArtist.id, token);
@@ -242,7 +261,7 @@ async function createOrUpdateReleaseWithFiles(
 
         if (!artist) {
           // Crear nuevo artista
-          const [newArtist] = await Artist.create(
+          const [newArtist] = await Artists.create(
             [
               {
                 name: spotifyArtist.name,
@@ -261,7 +280,7 @@ async function createOrUpdateReleaseWithFiles(
           return newArtist.id;
         } else {
           // Actualizar artista existente
-          await Artist.findOneAndUpdate(
+          await Artists.findOneAndUpdate(
             { spotifyId: spotifyArtist.id },
             {
               $addToSet: {
@@ -278,7 +297,7 @@ async function createOrUpdateReleaseWithFiles(
     // Obtener todos los géneros únicos de los artistas
     const uniqueGenreIds = [
       ...new Set(
-        (await Artist.find({ _id: { $in: artistIds } }).select('genres')).flatMap((a) => a.genres)
+        (await Artists.find({ _id: { $in: artistIds } }).select('genres')).flatMap((a) => a.genres)
       ),
     ];
 
@@ -315,6 +334,29 @@ async function createOrUpdateReleaseWithFiles(
         const uploadedTrack = uploadedTracks.find((ut) => ut.trackId === spotifyTrack.id);
         let track = await Tracks.findOne({ spotifyId: spotifyTrack.id });
 
+        // Obtener géneros de la pista
+        const trackGenres = await getTrackGenres(spotifyTrack.id, token);
+        
+        // Crear o actualizar géneros de la pista
+        const trackGenreIds = await Promise.all(
+          trackGenres.map(async (genreName) => {
+            let genre = await Genre.findOne({ name: genreName });
+            if (!genre) {
+              const [newGenre] = await Genre.create(
+                [
+                  {
+                    name: genreName,
+                    spotifyId: `${spotifyTrack.id}_${genreName}`,
+                  },
+                ],
+                { session }
+              );
+              return newGenre.id;
+            }
+            return genre.id;
+          })
+        );
+
         const trackData = {
           name: spotifyTrack.name,
           spotifyId: spotifyTrack.id,
@@ -324,25 +366,35 @@ async function createOrUpdateReleaseWithFiles(
           url:
             spotifyTrack.external_urls.spotify ||
             `https://open.spotify.com/track/${spotifyTrack.id}`,
-          duration: spotifyTrack.duration_ms,
+          duration: spotifyTrack.duration_ms || 0,
           trackNumber: spotifyTrack.track_number,
           discNumber: spotifyTrack.disc_number,
           isExplicit: spotifyTrack.explicit,
           popularity: spotifyTrack.popularity,
           audioUrl: uploadedTrack?.audioUrl || '',
           fileName: uploadedTrack?.fileName || '',
-          genres: uniqueGenreIds,
+          genres: trackGenreIds,
         };
 
         if (track) {
           track = await Tracks.findOneAndUpdate(
             { spotifyId: spotifyTrack.id },
-            { $set: trackData },
+            { 
+              $set: trackData,
+              $addToSet: { genres: { $each: trackGenreIds } }
+            },
             { session, new: true }
           );
           return track.id;
         } else {
           const [newTrack] = await Tracks.create([trackData], { session });
+          
+          await Genre.updateMany(
+            { _id: { $in: trackGenreIds } },
+            { $addToSet: { tracks: newTrack.id } },
+            { session }
+          );
+          
           return newTrack.id;
         }
       });
@@ -357,7 +409,7 @@ async function createOrUpdateReleaseWithFiles(
     );
 
     // 5. Actualizar los artistas con las referencias al álbum
-    await Artist.updateMany(
+    await Artists.updateMany(
       { _id: { $in: artistIds } },
       {
         $addToSet: {
