@@ -2,7 +2,6 @@
 
 import { FeaturedPlaylists } from '@/components/views/home/featured-playlists';
 import { HeroSection } from '@/components/views/home/hero-section';
-import { RecentArtists } from '@/components/views/home/recent-artists';
 import { RecentReleases } from '@/components/views/home/recent-releases';
 import { RecentlyPlayed } from '@/components/views/home/recently-played';
 import { RecommendedForYou } from '@/components/views/home/recommended-for-you';
@@ -13,7 +12,7 @@ export function HomePage() {
   const { isLoading, data } = useHomeData();
 
   return (
-    <div className="flex-1 py-8">
+    <div className="flex-1 pb-8">
       <HeroSection isLoading={isLoading} featured={data.featured} />
 
       <div className="px-6 space-y-10">

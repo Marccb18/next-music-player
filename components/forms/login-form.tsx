@@ -1,12 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Headphones, Link } from 'lucide-react';
+import { Headphones } from 'lucide-react';
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { Button } from '@/components/primitives/button';
 import {
@@ -17,10 +18,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/primitives/card';
-import { Checkbox } from '@/components/primitives/checkbox';
 import { Input } from '@/components/primitives/input';
 import { Label } from '@/components/primitives/label';
-import { Separator } from '@/components/primitives/separator';
 
 import { useUserStore } from '@/lib/client-only/stores/userStore';
 import { login } from '@/lib/server-only/users/users.actions';
@@ -57,7 +56,6 @@ export function LoginForm() {
       }
 
       setUser(result.user);
-
       router.refresh();
       router.push('/');
     } catch (err) {
@@ -92,48 +90,20 @@ export function LoginForm() {
               {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Contraseña</Label>
-                <Link
-                  href="/recuperar-password"
-                  className="text-xs text-muted-foreground hover:text-primary"
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
+              <Label htmlFor="password">Contraseña</Label>
               <Input id="password" type="password" {...register('password')} />
               {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="remember" />
-              <Label htmlFor="remember" className="text-sm">
-                Recordar sesión
-              </Label>
             </div>
             {error && <div className="text-sm text-red-500 text-center">{error}</div>}
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? 'Iniciando...' : 'Iniciar sesión'}
             </Button>
-            <div className="relative flex items-center justify-center">
-              <Separator className="w-full" />
-              <span className="absolute bg-card px-2 text-xs text-muted-foreground">
-                O continúa con
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" type="button">
-                Google
-              </Button>
-              <Button variant="outline" type="button">
-                Apple
-              </Button>
-            </div>
           </CardContent>
         </form>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             ¿No tienes una cuenta?{' '}
-            <Link href="/registro" className="font-medium text-primary hover:underline">
+            <Link href="/register" className="font-medium text-primary hover:underline">
               Regístrate
             </Link>
           </p>

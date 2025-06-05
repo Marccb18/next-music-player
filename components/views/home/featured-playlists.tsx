@@ -22,7 +22,7 @@ export function FeaturedPlaylists({ isLoading, playlists }: FeaturedPlaylistsPro
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Playlists destacadas</h2>
         <Button variant="ghost" size="sm" asChild className="gap-1">
-          <Link href="/playlists">
+          <Link href="/library">
             Ver todo
             <ChevronRight className="h-4 w-4" />
           </Link>
