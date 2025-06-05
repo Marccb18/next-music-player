@@ -59,52 +59,67 @@ export function AlbumDetailView({ album, onBack }: AlbumDetailViewProps) {
   return (
     <div className="flex-1">
       <div className="relative">
-        <div className="bg-gradient-to-b from-primary/20 to-background p-6">
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-4 gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Volver a Álbumes
-          </Button>
+        <div className="relative h-[600px]">
+          <div className="absolute inset-0 w-full h-full overflow-hidden">
+            {album.cover ? (
+              <img
+                src={album.cover}
+                alt={album.name}
+                className="w-full h-full object-cover object-center"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10" />
+            )}
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-black/5 to-transparent" />
+          <div className="absolute bottom-16 left-0 p-6 w-full">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-4 gap-2 text-white">
+              <ArrowLeft className="h-4 w-4" />
+              Volver a Álbumes
+            </Button>
 
-          <div className="flex flex-col md:flex-row md:items-end gap-6">
-            <div className="relative">
-              {album.cover ? (
-                <img
-                  src={album.cover}
-                  alt={album.name}
-                  className="w-48 h-48 rounded-lg shadow-xl object-cover"
-                />
-              ) : (
-                <div className="w-48 h-48 rounded-lg shadow-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                  <Music className="h-16 w-16 text-primary/40" />
-                </div>
-              )}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <Badge variant="outline" className="mb-2">
-                {album.type === 'album' ? 'Álbum' : album.type === 'single' ? 'Single' : 'EP'}
-              </Badge>
-              <h1 className="text-5xl font-bold mb-4 break-words">{album.name}</h1>
-              <div className="flex items-center gap-2 mb-4">
-                {album.artists.map((artist, index) => (
-                  <React.Fragment key={artist.id}>
-                    <span className="font-medium">{artist.name}</span>
-                    {index < album.artists.length - 1 && <span>,</span>}
-                  </React.Fragment>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>{formatDate(album.releaseDate)}</span>
-                <span>•</span>
-                <span>{album.totalTracks} canciones</span>
-                <span>•</span>
-                <span>{formatDuration(totalDuration)}</span>
-                {album.genres.length > 0 && (
-                  <>
-                    <span>•</span>
-                    <span>{album.genres.join(', ')}</span>
-                  </>
+            <div className="flex flex-col md:flex-row md:items-end gap-6">
+              <div className="relative">
+                {album.cover ? (
+                  <img
+                    src={album.cover}
+                    alt={album.name}
+                    className="w-48 h-48 rounded-lg shadow-xl object-cover"
+                  />
+                ) : (
+                  <div className="w-48 h-48 rounded-lg shadow-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+                    <Music className="h-16 w-16 text-primary/40" />
+                  </div>
                 )}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <Badge variant="outline" className="mb-2 bg-white/10 border-white/20 text-white">
+                  {album.type === 'album' ? 'Álbum' : album.type === 'single' ? 'Single' : 'EP'}
+                </Badge>
+                <h1 className="text-5xl font-bold mb-4 break-words text-white">{album.name}</h1>
+                <div className="flex items-center gap-2 mb-4 text-white/80">
+                  {album.artists.map((artist, index) => (
+                    <React.Fragment key={artist.id}>
+                      <span className="font-medium">{artist.name}</span>
+                      {index < album.artists.length - 1 && <span>,</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/60">
+                  <span>{formatDate(album.releaseDate)}</span>
+                  <span>•</span>
+                  <span>{album.totalTracks} canciones</span>
+                  <span>•</span>
+                  <span>{formatDuration(totalDuration)}</span>
+                  {album.genres.length > 0 && (
+                    <>
+                      <span>•</span>
+                      <span>{album.genres.join(', ')}</span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
