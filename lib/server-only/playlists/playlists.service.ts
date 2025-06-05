@@ -5,14 +5,16 @@ import connectMongo, { Playlists } from '@/lib/mongo';
 connectMongo();
 
 export const getPlaylists = async (userId: string) => {
-  const playlists = await Playlists.find({ owner: userId }).populate({
-    path: 'songs.track',
-    model: 'Tracks',
-    populate: [
-      { path: 'album', model: 'Release' },
-      { path: 'artists', model: 'Artists' },
-    ],
-  });
+  const playlists = await Playlists.find({ owner: userId })
+    .populate({
+      path: 'songs.track',
+    })
+    .populate({
+      path: 'songs.track.album',
+    })
+    .populate({
+      path: 'songs.track.artists',
+    });
   return JSON.parse(JSON.stringify(playlists));
 };
 
@@ -92,13 +94,15 @@ export const removeSongFromPlaylist = async (
 };
 
 export const getPlaylistDetails = async (playlistId: string) => {
-  const playlist = await Playlists.findById(playlistId).populate({
-    path: 'songs.track',
-    model: 'Tracks',
-    populate: [
-      { path: 'album', model: 'Release' },
-      { path: 'artists', model: 'Artists' },
-    ],
-  });
+  const playlist = await Playlists.findById(playlistId)
+    .populate({
+      path: 'songs.track',
+    })
+    .populate({
+      path: 'songs.track.album',
+    })
+    .populate({
+      path: 'songs.track.artists',
+    });
   return JSON.parse(JSON.stringify(playlist));
 };

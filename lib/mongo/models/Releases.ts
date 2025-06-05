@@ -95,7 +95,6 @@ const releaseSchema = new mongoose.Schema(
 );
 
 releaseSchema.index({ name: 'text' });
-releaseSchema.index({ spotifyId: 1 }, { unique: true });
 releaseSchema.index({ releaseDate: -1 });
 releaseSchema.index({ popularity: -1 });
 
@@ -115,4 +114,4 @@ releaseSchema.pre(['save', 'updateOne'], async function (this: any, next) {
   }
 });
 
-export const Release = mongoose.models.Release || mongoose.model('Release', releaseSchema);
+export const Release = mongoose.models.Releases || mongoose.model('Releases', releaseSchema);

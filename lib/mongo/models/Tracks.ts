@@ -92,7 +92,6 @@ const trackSchema = new mongoose.Schema(
 
 // Mantenemos solo estas definiciones de índices
 trackSchema.index({ name: 'text' });
-trackSchema.index({ spotifyId: 1 }, { unique: true });
 trackSchema.index({ popularity: -1 });
 trackSchema.index({ 'audioFeatures.tempo': 1 });
 trackSchema.index({ 'audioFeatures.energy': 1 });
