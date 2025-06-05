@@ -20,12 +20,6 @@ export function RecentlyPlayed({ isLoading, tracks }: RecentlyPlayedProps) {
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Reproducidos recientemente</h2>
-        <Button variant="ghost" size="sm" asChild className="gap-1">
-          <a href="/tracks">
-            Ver todo
-            <ChevronRight className="h-4 w-4" />
-          </a>
-        </Button>
       </div>
 
       <ScrollArea className="w-full whitespace-nowrap pb-4">

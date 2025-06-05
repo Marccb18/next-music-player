@@ -3,13 +3,14 @@
 import { useFormat } from '@/hooks/useFormat';
 import { Calendar, Play } from 'lucide-react';
 
+import { useRouter } from 'next/navigation';
+
 import { Badge } from '@/components/primitives/badge';
 import { Button } from '@/components/primitives/button';
 import { Skeleton } from '@/components/primitives/skeleton';
 
-import type { Album } from '@/lib/types/music';
-import { useRouter } from 'next/navigation';
 import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
+import type { Album } from '@/lib/types/music';
 
 interface HeroSectionProps {
   isLoading: boolean;
