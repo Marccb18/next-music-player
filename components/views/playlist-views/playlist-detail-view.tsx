@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  AlertTriangle,
   ArrowLeft,
   Clock,
   Edit3,
@@ -27,21 +26,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/primitives/dropdown-menu';
-import { Input } from '@/components/primitives/input';
 
-import { getPlaylistDetails } from '@/lib/server-only/playlists/playlists.service';
 import { cn } from '@/lib/utils';
 import { useFormat } from '@/hooks/use-format';
-
-interface Track {
-  id: string;
-  name: string;
-  duration: number;
-  image?: string;
-  album?: { name: string; cover?: string };
-  artists?: { name: string }[];
-  isLiked?: boolean;
-}
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
+import { Track } from '@/lib/types/music';
 
 interface Playlist {
   id: string;
@@ -71,9 +60,9 @@ export function PlaylistDetailView({
   onEdit,
   onDelete,
 }: PlaylistDetailViewProps) {
-  const [isPlaying, setIsPlaying] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const { formatTime, formatDuration, formatDate } = useFormat();
+  const { reproduceAlbum, reproduceShuffleAlbum, queue, play, pause, isPlaying } = useAudioPlayer();
   const filteredTracks = playlist.tracks.filter((track) => {
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -147,7 +136,13 @@ export function PlaylistDetailView({
             <Button
               size="lg"
               className="rounded-full h-14 w-14"
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={() => {
+                if (queue === playlist.tracks && isPlaying) {
+                  pause();
+                } else {
+                  reproduceAlbum(playlist.tracks);
+                }
+              }}
               disabled={playlist.tracks.length === 0}
             >
               {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
@@ -180,10 +175,6 @@ export function PlaylistDetailView({
                 <DropdownMenuItem onClick={onEdit}>
                   <Edit3 className="h-4 w-4 mr-2" />
                   Editar detalles
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Añadir canciones
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -270,21 +261,6 @@ export function PlaylistDetailView({
 
                 <div className="flex items-center">
                   <p className="text-sm text-muted-foreground truncate">{track.album?.name}</p>
-                </div>
-
-                <div className="flex items-center">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={cn(
-                      'h-6 w-6 p-0 opacity-0 group-hover:opacity-100',
-                      track.isLiked && 'opacity-100'
-                    )}
-                  >
-                    <Heart
-                      className={cn('h-4 w-4', track.isLiked && 'fill-red-500 text-red-500')}
-                    />
-                  </Button>
                 </div>
 
                 <div className="flex items-center justify-end">

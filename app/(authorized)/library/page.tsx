@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
 
 import * as React from 'react';
 
@@ -8,15 +9,18 @@ import { CreatePlaylistDialog } from '@/components/dialogs/create-playlist-dialo
 import { DeletePlaylistDialog } from '@/components/dialogs/delete-playlist-dialog';
 import { EditPlaylistDialog } from '@/components/dialogs/edit-playlist-dialog';
 import { Button } from '@/components/primitives/button';
-import { EmptyState } from '@/components/views/playlist-detail-view/empty-state';
-import { NoResults } from '@/components/views/playlist-detail-view/no-results';
-import { PlaylistsGrid } from '@/components/views/playlist-detail-view/playlists-grid';
-import { SearchBar } from '@/components/views/playlist-detail-view/search-bar';
+import { EmptyState } from '@/components/views/playlist-views/empty-state';
+import { NoResults } from '@/components/views/playlist-views/no-results';
+import { PlaylistsGrid } from '@/components/views/playlist-views/playlists-grid';
+import { SearchBar } from '@/components/views/playlist-views/search-bar';
 
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { Playlist, PlaylistFormData } from '@/lib/types/playlist';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function PlaylistsView() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState('');
   const [showCreateDialog, setShowCreateDialog] = React.useState(false);
   const [editingPlaylist, setEditingPlaylist] = React.useState<Playlist | null>(null);
@@ -54,6 +58,9 @@ export default function PlaylistsView() {
       isPublic: data.isPublic,
     });
     setEditingPlaylist(null);
+    if (pathname.includes('playlist/')) {
+      router.push(`/library/playlist/${editingPlaylist.id}`);
+    }
   };
 
   const handleDeletePlaylist = () => {

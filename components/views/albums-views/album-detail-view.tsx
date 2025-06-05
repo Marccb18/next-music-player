@@ -144,9 +144,6 @@ export function AlbumDetailView({ album, onBack }: AlbumDetailViewProps) {
             >
               <Heart className={cn('h-5 w-5', isLiked && 'fill-red-500')} />
             </Button>
-            <Button variant="ghost" size="lg">
-              <Share className="h-5 w-5" />
-            </Button>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

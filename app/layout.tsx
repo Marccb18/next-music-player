@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} min-h-screen bg-background antialiased`}>
         <SidebarProvider>
           {children}
-          <Toaster richColors position="bottom-center" />
+          <Toaster position="bottom-center" />
         </SidebarProvider>
       </body>
     </html>
