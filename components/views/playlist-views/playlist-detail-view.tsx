@@ -101,7 +101,7 @@ export function PlaylistDetailView({
 
   const handleAddToPlaylist = (playlistId: string) => {
     if (selectedTrack) {
-      addSongToPlaylist(playlists.find(p => p.id === playlistId)!, selectedTrack.id);
+      addSongToPlaylist(playlists.find((p) => p.id === playlistId)!, selectedTrack.id);
       setIsAddToPlaylistOpen(false);
     }
   };
@@ -127,7 +127,8 @@ export function PlaylistDetailView({
               ) : (
                 <div
                   className="w-48 h-48 rounded-lg shadow-xl flex items-center justify-center"
-                  style={playlist.coverStyle}>
+                  style={playlist.coverStyle}
+                >
                   <div className="text-6xl font-bold text-primary/50">
                     {playlist.name.charAt(0).toUpperCase()}
                   </div>
@@ -169,14 +170,16 @@ export function PlaylistDetailView({
                   reproduceAlbum(playlist.tracks);
                 }
               }}
-              disabled={playlist.tracks.length === 0}>
+              disabled={playlist.tracks.length === 0}
+            >
               {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
             </Button>
             <Button
               variant="outline"
               size="lg"
               className="gap-2"
-              disabled={playlist.tracks.length === 0}>
+              disabled={playlist.tracks.length === 0}
+            >
               <Shuffle className="h-4 w-4" />
               Aleatorio
             </Button>
@@ -203,7 +206,8 @@ export function PlaylistDetailView({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={onDelete}
-                  className="text-destructive focus:text-destructive">
+                  className="text-destructive focus:text-destructive"
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Eliminar playlist
                 </DropdownMenuItem>
@@ -295,11 +299,12 @@ export function PlaylistDetailView({
                 <ContextMenuContent>
                   <ContextMenuItem
                     onClick={() => {
-                      console.log(track)
+                      console.log(track);
                       if (track.album?.id) {
                         router.push(`/albums/${track.album.id}`);
                       }
-                    }}>
+                    }}
+                  >
                     <Music className="h-4 w-4 mr-2" />
                     Ver álbum
                   </ContextMenuItem>
@@ -307,7 +312,8 @@ export function PlaylistDetailView({
                     onClick={() => {
                       setSelectedTrack(track);
                       setIsAddToPlaylistOpen(true);
-                    }}>
+                    }}
+                  >
                     <Library className="h-4 w-4 mr-2" />
                     Añadir a playlist
                   </ContextMenuItem>
@@ -316,9 +322,13 @@ export function PlaylistDetailView({
                       <ContextMenuSeparator />
                       <ContextMenuItem
                         onClick={() => {
-                          removeSongFromPlaylist(playlists.find(p => p.id === playlist.id)!, track.id);
+                          removeSongFromPlaylist(
+                            playlists.find((p) => p.id === playlist.id)!,
+                            track.id
+                          );
                         }}
-                        className="text-destructive focus:text-destructive">
+                        className="text-destructive focus:text-destructive"
+                      >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Eliminar de la playlist
                       </ContextMenuItem>

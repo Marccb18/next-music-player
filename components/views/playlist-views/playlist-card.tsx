@@ -1,5 +1,15 @@
 import { useFormat } from '@/hooks/use-format';
-import { Clock, Edit3, Globe, Lock, MoreHorizontal, Music, Play, Shuffle, Trash2 } from 'lucide-react';
+import {
+  Clock,
+  Edit3,
+  Globe,
+  Lock,
+  MoreHorizontal,
+  Music,
+  Play,
+  Shuffle,
+  Trash2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useRouter } from 'next/navigation';
@@ -35,9 +45,13 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
   const handleReproducePlaylist = (shuffle: boolean = false) => {
     if (playlist.songs && playlist.songs.length > 0) {
       if (shuffle) {
-        reproduceShuffleAlbum(playlist.songs.map((song) => (typeof song === 'string' ? song : song.track)));
+        reproduceShuffleAlbum(
+          playlist.songs.map((song) => (typeof song === 'string' ? song : song.track))
+        );
       } else {
-        reproduceAlbum(playlist.songs.map((song) => (typeof song === 'string' ? song : song.track)));
+        reproduceAlbum(
+          playlist.songs.map((song) => (typeof song === 'string' ? song : song.track))
+        );
       }
     } else {
       toast.info('No hay canciones en la playlist', {
@@ -51,11 +65,13 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
       <CardHeader className="p-0">
         <div
           className="relative aspect-square overflow-hidden rounded-t-lg cursor-pointer"
-          onClick={handlePlaylistClick}>
+          onClick={handlePlaylistClick}
+        >
           {playlist.covers.length > 0 && playlist.covers[0]?.startsWith('linear-gradient') ? (
             <div
               className="w-full h-full flex items-center justify-center"
-              style={{ background: playlist.covers[0] }}>
+              style={{ background: playlist.covers[0] }}
+            >
               <Music className="h-16 w-16 text-primary/40" />
             </div>
           ) : playlist.covers.length > 0 ? (
@@ -78,7 +94,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
               onClick={(e) => {
                 e.stopPropagation();
                 handleReproducePlaylist();
-              }}>
+              }}
+            >
               <Play className="h-5 w-5 ml-0.5" />
             </Button>
           </div>
@@ -89,7 +106,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
         <div className="flex items-start justify-between mb-2">
           <h3
             className="font-semibold text-lg truncate cursor-pointer"
-            onClick={handlePlaylistClick}>
+            onClick={handlePlaylistClick}
+          >
             {playlist.name}
           </h3>
 
@@ -99,7 +117,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => e.stopPropagation()}>
+                onClick={(e) => e.stopPropagation()}
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -108,7 +127,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
                 onClick={(e) => {
                   e.stopPropagation();
                   handleReproducePlaylist();
-                }}>
+                }}
+              >
                 <Play className="h-4 w-4 mr-2" />
                 Reproducir
               </DropdownMenuItem>
@@ -116,7 +136,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
                 onClick={(e) => {
                   e.stopPropagation();
                   handleReproducePlaylist(true);
-                }}>
+                }}
+              >
                 <Shuffle className="h-4 w-4 mr-2" />
                 Reproducir aleatorio
               </DropdownMenuItem>
@@ -124,7 +145,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(playlist);
-                }}>
+                }}
+              >
                 <Edit3 className="h-4 w-4 mr-2" />
                 Editar
               </DropdownMenuItem>
@@ -134,7 +156,8 @@ export function PlaylistCard({ playlist, onEdit, onDelete }: PlaylistCardProps) 
                   e.stopPropagation();
                   onDelete(playlist);
                 }}
-                className="text-destructive focus:text-destructive">
+                className="text-destructive focus:text-destructive"
+              >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Eliminar
               </DropdownMenuItem>

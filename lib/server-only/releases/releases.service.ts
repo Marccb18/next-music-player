@@ -117,7 +117,7 @@ export const getReleases = async ({ search }: { search?: string } = {}) => {
       .select('name artists tracks cover releaseDate type totalTracks totalDuration id')
       .populate('artists', 'name id');
 
-    console.log('releases',releases);
+    console.log('releases', releases);
     return JSON.parse(JSON.stringify(releases));
   } catch (error) {
     console.error('Error al obtener los álbumes:', error);
@@ -145,7 +145,7 @@ export const getReleaseById = async (id: string) => {
 
     // Convertir el documento de Mongoose a un objeto plano
     const releaseObject = release.toObject();
-    
+
     // Asegurarnos de que las fechas se serialicen correctamente
     if (releaseObject.releaseDate) {
       releaseObject.releaseDate = new Date(releaseObject.releaseDate);
@@ -161,10 +161,12 @@ export const getReleaseById = async (id: string) => {
           id: artist._id.toString(),
           name: artist.name,
         })),
-        album: track.album ? {
-          id: track.album._id.toString(),
-          name: track.album.name,
-        } : undefined,
+        album: track.album
+          ? {
+              id: track.album._id.toString(),
+              name: track.album.name,
+            }
+          : undefined,
         duration: track.duration,
         trackNumber: track.trackNumber,
         isExplicit: track.isExplicit,

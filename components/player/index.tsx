@@ -20,6 +20,8 @@ import {
 import { useEffect } from 'react';
 import React from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
 import { Button } from '@/components/primitives/button';
 import {
@@ -30,13 +32,12 @@ import {
 } from '@/components/primitives/dropdown-menu';
 import { Slider } from '@/components/primitives/slider';
 
-import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
-import { cn } from '@/lib/utils';
+import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { getTracks } from '@/lib/server-only/tracks/tracks.service';
+import { cn } from '@/lib/utils';
 
 import { QueueSheet } from './controls/queue-sheet';
-import { useRouter } from 'next/navigation';
 
 interface AudioPlayerProps {
   className?: string;

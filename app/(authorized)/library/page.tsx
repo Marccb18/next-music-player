@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 
 import * as React from 'react';
 
+import { usePathname, useRouter } from 'next/navigation';
+
 import { CreatePlaylistDialog } from '@/components/dialogs/create-playlist-dialog';
 import { DeletePlaylistDialog } from '@/components/dialogs/delete-playlist-dialog';
 import { EditPlaylistDialog } from '@/components/dialogs/edit-playlist-dialog';
@@ -16,7 +18,6 @@ import { SearchBar } from '@/components/views/playlist-views/search-bar';
 
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { Playlist, PlaylistFormData } from '@/lib/types/playlist';
-import { usePathname, useRouter } from 'next/navigation';
 
 export default function PlaylistsView() {
   const pathname = usePathname();

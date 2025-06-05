@@ -43,12 +43,7 @@ export function QueueSheet() {
                 }}
               >
                 <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md">
-                  <Image
-                    src={song.image || ''}
-                    alt={song.name}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={song.image || ''} alt={song.name} fill className="object-cover" />
                 </div>
                 <div className="flex flex-col items-start gap-1 flex-1 min-w-0">
                   <span className="font-medium line-clamp-1 text-ellipsis overflow-hidden w-full">

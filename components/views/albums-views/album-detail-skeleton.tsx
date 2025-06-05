@@ -56,4 +56,4 @@ export function AlbumDetailSkeleton() {
       </div>
     </div>
   );
-} 
+}

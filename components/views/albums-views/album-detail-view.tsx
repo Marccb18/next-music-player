@@ -29,8 +29,8 @@ import {
 import { EmptyState } from '@/components/primitives/empty-state';
 import { Input } from '@/components/primitives/input';
 import { TrackList } from '@/components/views/albums-views/track-list';
-import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 import type { Album, Track } from '@/lib/types/music';
 import { cn } from '@/lib/utils';
 
@@ -125,11 +125,15 @@ export function AlbumDetailView({ album, onBack }: AlbumDetailViewProps) {
                 }
               }}
             >
-              {isPlaying && queue === album.tracks ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
+              {isPlaying && queue === album.tracks ? (
+                <Pause className="h-6 w-6" />
+              ) : (
+                <Play className="h-6 w-6 ml-1" />
+              )}
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
+            <Button
+              variant="outline"
+              size="lg"
               className="gap-2"
               onClick={() => reproduceShuffleAlbum(album.tracks)}
             >

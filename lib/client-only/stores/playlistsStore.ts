@@ -5,12 +5,12 @@ import {
   createPlaylist as createPlaylistServer,
   deletePlaylist as deletePlaylistServer,
   getPlaylists,
-  updatePlaylist as updatePlaylistServer,
   removeSongFromPlaylist as removeSongFromPlaylistServer,
+  updatePlaylist as updatePlaylistServer,
 } from '@/lib/server-only/playlists/playlists.service';
+import { Track } from '@/lib/types/music';
 
 import { useUserStore } from './userStore';
-import { Track } from '@/lib/types/music';
 
 type Playlist = {
   id: string;

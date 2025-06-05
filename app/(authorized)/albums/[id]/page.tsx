@@ -1,10 +1,11 @@
 'use client';
 
 import * as React from 'react';
+
 import { useRouter } from 'next/navigation';
 
-import { AlbumDetailView } from '@/components/views/albums-views/album-detail-view';
 import { AlbumDetailSkeleton } from '@/components/views/albums-views/album-detail-skeleton';
+import { AlbumDetailView } from '@/components/views/albums-views/album-detail-view';
 
 import { getReleaseById } from '@/lib/server-only/releases/releases.service';
 import type { Album } from '@/lib/types/music';

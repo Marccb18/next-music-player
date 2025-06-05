@@ -6,11 +6,11 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 
 import { uploadFileToS3 } from '@/lib/client-only/aws/s3';
+import { useAlertDialogStore } from '@/lib/client-only/stores/alertDialogStore';
 import {
   createOrUpdateReleaseWithFiles,
   searchSpotifyAlbumBySong,
 } from '@/lib/server-only/spotify';
-import { useAlertDialogStore } from '@/lib/client-only/stores/alertDialogStore';
 
 import { UploadDrawer } from '../drawers/upload-drawer';
 import { Step1Search } from './steps/Step1Search';
@@ -27,7 +27,7 @@ export default function SpotifyUploader() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedTrackForUpload, setSelectedTrackForUpload] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
+
   const alertDialog = useAlertDialogStore();
 
   const searchSpotifyRelease = async () => {
@@ -136,7 +136,7 @@ export default function SpotifyUploader() {
       title: 'Confirmar importación',
       description: `Estás a punto de importar ${trackFiles.filter((tf) => tf.file !== null).length} de ${spotifyData?.totalTracks} canciones. ¿Estás seguro de que deseas continuar con la importación?`,
       onContinue: handleConfirmComplete,
-      onCancel: () => alertDialog.close()
+      onCancel: () => alertDialog.close(),
     });
   };
 

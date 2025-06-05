@@ -1,6 +1,7 @@
-import { getTracks, getTracksByIds } from '@/lib/server-only/tracks/tracks.service';
 import { Howl } from 'howler';
 import { create } from 'zustand';
+
+import { getTracks, getTracksByIds } from '@/lib/server-only/tracks/tracks.service';
 
 export interface Song {
   id: string;

@@ -2,9 +2,11 @@
 
 import { useFormat } from '@/hooks/use-format';
 import { Clock, Heart, MoreHorizontal, Play } from 'lucide-react';
+import { Library } from 'lucide-react';
 
 import * as React from 'react';
 
+import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
 import { Button } from '@/components/primitives/button';
 import {
   ContextMenu,
@@ -13,12 +15,9 @@ import {
   ContextMenuTrigger,
 } from '@/components/primitives/context-menu';
 
-import { Library } from 'lucide-react';
-
+import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import type { Track } from '@/lib/types/music';
 import { cn } from '@/lib/utils';
-import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
-import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
 
 interface TrackListProps {
   tracks: Track[];
@@ -44,7 +43,7 @@ export function TrackList({ tracks }: TrackListProps) {
 
   const handleAddToPlaylist = (playlistId: string) => {
     if (selectedTrack) {
-      addSongToPlaylist(playlists.find(p => p.id === playlistId)!, selectedTrack.id);
+      addSongToPlaylist(playlists.find((p) => p.id === playlistId)!, selectedTrack.id);
       setIsAddToPlaylistOpen(false);
     }
   };

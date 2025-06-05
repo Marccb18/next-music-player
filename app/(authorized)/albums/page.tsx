@@ -1,9 +1,10 @@
 'use client';
 
 import { Disc, Search } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import * as React from 'react';
+
+import { useRouter } from 'next/navigation';
 
 import { EmptyState } from '@/components/primitives/empty-state';
 import { Input } from '@/components/primitives/input';

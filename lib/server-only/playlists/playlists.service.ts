@@ -48,12 +48,16 @@ export const deletePlaylist = async (userId: string, playlistId: string) => {
   await Playlists.findOneAndDelete({ _id: playlistId, owner: userId });
 };
 
-export const addSongToPlaylist = async (userId: string, playlistId: string, trackIds: string | string[]) => {
+export const addSongToPlaylist = async (
+  userId: string,
+  playlistId: string,
+  trackIds: string | string[]
+) => {
   const playlist = await Playlists.findOne({ _id: playlistId, owner: userId });
   if (!playlist) return null;
 
   const trackIdsArray = Array.isArray(trackIds) ? trackIds : [trackIds];
-  
+
   for (const trackId of trackIdsArray) {
     // Verificar si la canción ya existe en la playlist
     const songExists = playlist.songs.some((s: any) => s.track.toString() === trackId);
