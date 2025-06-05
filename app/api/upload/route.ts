@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     // Subir archivo a S3
     const fileBuffer = await file.arrayBuffer();
     const command = new PutObjectCommand({
-      Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET_NAME!,
+      Bucket: process.env.NEXT_PRIVATE_AWS_BUCKET_NAME!,
       Key: key,
       Body: Buffer.from(fileBuffer),
       ContentType: 'audio/mpeg',
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     await s3Client.send(command);
 
     // Construir la URL directa de S3
-    const fileUrl = `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
+    const fileUrl = `https://${process.env.NEXT_PRIVATE_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PRIVATE_AWS_REGION}.amazonaws.com/${key}`;
 
     return NextResponse.json({
       url: fileUrl,

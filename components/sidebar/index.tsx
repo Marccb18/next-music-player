@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/hooks/useAuth';
 import { Heart, Home, Library, Mic2, Music, Plus, Search, Upload } from 'lucide-react';
 
 import { useEffect } from 'react';
@@ -20,7 +21,6 @@ import {
 } from '@/components/primitives/sidebar';
 
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
-import { useAuth } from '@/lib/hooks/useAuth';
 import { getPlaylists as getPlaylistsFromServer } from '@/lib/server-only/playlists/playlists.service';
 
 import { AppSidebarFooter } from './footer';

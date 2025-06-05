@@ -1,9 +1,9 @@
 import { S3Client } from '@aws-sdk/client-s3';
 
 const requiredEnvVars = {
-  region: process.env.NEXT_PUBLIC_AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.NEXT_PRIVATE_AWS_REGION,
+  accessKeyId: process.env.NEXT_PRIVATE_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PRIVATE_AWS_SECRET_ACCESS_KEY,
 };
 
 // Verificar que todas las variables de entorno estén definidas

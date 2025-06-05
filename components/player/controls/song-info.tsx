@@ -1,6 +1,6 @@
 import { Music2 } from 'lucide-react';
 
-import { Track } from '@/lib/types';
+import { Track } from '@/lib/types/music';
 
 interface SongInfoProps {
   currentSong: Track | null;

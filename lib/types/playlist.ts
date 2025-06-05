@@ -1,3 +1,5 @@
+import { Track } from './music';
+
 export interface Playlist {
   id: string;
   name: string;
@@ -7,7 +9,7 @@ export interface Playlist {
   totalDuration: number;
   totalSongs: number;
   songs?: Array<{
-    track: string;
+    track: Track;
     position: number;
     addedAt: Date;
   }>;

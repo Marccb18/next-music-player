@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
 import { HomePage as HomePageView } from '@/components/views/home/home-page';
 
 import { connectMongo } from '@/lib/mongo';

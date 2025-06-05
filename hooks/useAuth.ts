@@ -5,8 +5,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useUserStore } from '@/lib/client-only/stores/userStore';
-
-import { logout as logoutAction } from '../server-only/users/users.actions';
+import { logout as logoutAction } from '@/lib/server-only/users/users.actions';
 
 export function useAuth() {
   const router = useRouter();

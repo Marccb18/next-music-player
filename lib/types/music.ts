@@ -1,4 +1,3 @@
-
 import { Release } from '@/lib/mongo/models/Releases';
 
 export type Track = {

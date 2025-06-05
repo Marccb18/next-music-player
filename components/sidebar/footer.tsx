@@ -1,6 +1,7 @@
 'use client';
 
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles, User } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Bell, ChevronsUpDown, CreditCard, LogOut, User } from 'lucide-react';
 
 import React from 'react';
 
@@ -21,8 +22,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/primitives/sidebar';
-
-import { useAuth } from '@/lib/hooks/useAuth';
 
 export function AppSidebarFooter() {
   const { logout, user } = useAuth();
