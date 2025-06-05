@@ -19,7 +19,7 @@ export function HomePage() {
       <div className="px-6 space-y-10">
         <RecentReleases isLoading={isLoading} releases={data.recentReleases} />
 
-        <RecentArtists isLoading={isLoading} artists={data.recentArtists} />
+        {/* <RecentArtists isLoading={isLoading} artists={data.recentArtists} /> */}
 
         <RecentlyPlayed isLoading={isLoading} tracks={data.recentlyPlayed} />
 

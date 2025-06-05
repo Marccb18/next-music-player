@@ -1,16 +1,30 @@
 'use client';
 
-import * as React from 'react';
-import { Heart, MoreHorizontal, Play, Plus, ListPlus } from 'lucide-react';
-
-import { Button } from '@/components/primitives/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/primitives/dropdown-menu';
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/primitives/context-menu';
-import { cn } from '@/lib/utils';
 import { useFormat } from '@/hooks/use-format';
+import { Heart, ListPlus, MoreHorizontal, Play, Plus } from 'lucide-react';
+
+import * as React from 'react';
+
+import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
+import { Button } from '@/components/primitives/button';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/primitives/context-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/primitives/dropdown-menu';
+
 import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
-import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
+import { cn } from '@/lib/utils';
 
 interface TrackListProps {
   tracks: any[];
@@ -48,10 +62,7 @@ export function TrackList({ tracks }: TrackListProps) {
 
   const onAddToPlaylist = async (playlistId: string) => {
     if (selectedTrack) {
-      await addSongToPlaylist(
-        playlists.find(p => p.id === playlistId)!,
-        selectedTrack.id
-      );
+      await addSongToPlaylist(playlists.find((p) => p.id === playlistId)!, selectedTrack.id);
       setIsAddToPlaylistOpen(false);
     }
   };
@@ -72,7 +83,7 @@ export function TrackList({ tracks }: TrackListProps) {
               >
                 <div className="relative h-10 w-10 rounded overflow-hidden">
                   <img
-                    src={track.image || "/placeholder.svg?height=40&width=40"}
+                    src={track.image || '/placeholder.svg?height=40&width=40'}
                     alt={track.name}
                     className="h-full w-full object-cover"
                   />
@@ -94,9 +105,21 @@ export function TrackList({ tracks }: TrackListProps) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">{formatTime(track.duration)}</span>
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={(e) => toggleLike(e, track._id)}>
-                    <Heart className={cn("h-4 w-4", likedTracks[track._id] && "fill-red-500 text-red-500")} />
+                  <span className="text-xs text-muted-foreground">
+                    {formatTime(track.duration)}
+                  </span>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8"
+                    onClick={(e) => toggleLike(e, track._id)}
+                  >
+                    <Heart
+                      className={cn(
+                        'h-4 w-4',
+                        likedTracks[track._id] && 'fill-red-500 text-red-500'
+                      )}
+                    />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

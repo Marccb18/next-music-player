@@ -8,6 +8,8 @@ import { Button } from '@/components/primitives/button';
 import { Skeleton } from '@/components/primitives/skeleton';
 
 import type { Album } from '@/lib/types/music';
+import { useRouter } from 'next/navigation';
+import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 
 interface HeroSectionProps {
   isLoading: boolean;
@@ -16,7 +18,13 @@ interface HeroSectionProps {
 
 export function HeroSection({ isLoading, featured }: HeroSectionProps) {
   const { formatDate } = useFormat();
-
+  const router = useRouter();
+  const { reproduceAlbum } = useAudioPlayer();
+  const handlePlay = () => {
+    if (featured) {
+      reproduceAlbum(featured.tracks);
+    }
+  };
   if (isLoading) {
     return (
       <div className="relative h-[400px] mb-10">
@@ -81,7 +89,7 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
             </div>
 
             <div className="flex gap-3 mt-4">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="gap-2" onClick={handlePlay}>
                 <Play className="h-5 w-5 ml-0.5" />
                 Reproducir
               </Button>
@@ -89,6 +97,7 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
                 size="lg"
                 variant="outline"
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                onClick={() => router.push(`/albums/${featured.id}`)}
               >
                 Ver álbum
               </Button>

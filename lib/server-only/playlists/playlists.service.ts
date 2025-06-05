@@ -94,19 +94,18 @@ export const removeSongFromPlaylist = async (
 };
 
 export const getPlaylistDetails = async (playlistId: string) => {
-  const playlist = await Playlists.findById(playlistId)
-    .populate({
-      path: 'songs.track',
-      populate: [
-        {
-          path: 'album',
-          select: 'name id'
-        },
-        {
-          path: 'artists',
-          select: 'name id'
-        }
-      ]
-    });
+  const playlist = await Playlists.findById(playlistId).populate({
+    path: 'songs.track',
+    populate: [
+      {
+        path: 'album',
+        select: 'name id',
+      },
+      {
+        path: 'artists',
+        select: 'name id',
+      },
+    ],
+  });
   return JSON.parse(JSON.stringify(playlist));
 };

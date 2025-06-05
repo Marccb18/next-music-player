@@ -324,15 +324,15 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
     get().clearQueue();
     if (Array.isArray(tracks) && tracks.length > 0) {
       let loadedTracks: Song[];
-      
+
       if (typeof tracks[0] === 'string') {
         loadedTracks = await getTracksByIds(tracks as string[]);
       } else {
         // Si ya tenemos objetos Song, asegurémonos de que tengan todos los datos necesarios
-        const trackIds = (tracks as Song[]).map(track => track.id);
+        const trackIds = (tracks as Song[]).map((track) => track.id);
         loadedTracks = await getTracksByIds(trackIds);
       }
-      
+
       set({ queue: loadedTracks, shouldAutoPlay: true });
       get().play(loadedTracks[0]);
       return;
@@ -342,15 +342,15 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
   reproduceShuffleAlbum: async (tracks: Song[] | string[]) => {
     if (Array.isArray(tracks) && tracks.length > 0) {
       let loadedTracks: Song[];
-      
+
       if (typeof tracks[0] === 'string') {
         loadedTracks = await getTracksByIds(tracks as string[]);
       } else {
-        const trackIds = (tracks as Song[]).map(track => track.id);
+        const trackIds = (tracks as Song[]).map((track) => track.id);
         loadedTracks = await getTracksByIds(trackIds);
       }
-      
-      set({ queue: loadedTracks, shouldAutoPlay: true});
+
+      set({ queue: loadedTracks, shouldAutoPlay: true });
       get().toggleShuffle();
       const queue = get().queue;
       get().play(queue[0]);
