@@ -20,6 +20,8 @@ export function PlaylistTrackList({
 }: PlaylistTrackListProps) {
   const { formatTime } = useFormat();
 
+  console.log(tracks);
+
   if (tracks.length === 0) {
     return (
       <div className="text-center py-16">

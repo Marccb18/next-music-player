@@ -1,4 +1,5 @@
 import { DiscAlbum, Library, MoreHorizontal } from 'lucide-react';
+
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/primitives/button';
@@ -14,12 +15,11 @@ import { Track } from '@/lib/types/music';
 interface PlayerOptionsProps {
   currentSong: Track | null;
   onAddToPlaylist: () => void;
+  isAddToPlaylistOpen: boolean;
+  setIsAddToPlaylistOpen: (open: boolean) => void;
 }
 
-export function PlayerOptions({
-  currentSong,
-  onAddToPlaylist,
-}: PlayerOptionsProps) {
+export function PlayerOptions({ currentSong, onAddToPlaylist }: PlayerOptionsProps) {
   const router = useRouter();
 
   const handleViewAlbum = () => {
@@ -35,17 +35,11 @@ export function PlayerOptions({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={onAddToPlaylist}
-          className="flex gap-1 items-center"
-        >
+        <DropdownMenuItem onClick={onAddToPlaylist} className="flex gap-1 items-center">
           <Library className="h-4 w-4" />
           Añadir a playlist
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex gap-1 items-center"
-          onClick={handleViewAlbum}
-        >
+        <DropdownMenuItem className="flex gap-1 items-center" onClick={handleViewAlbum}>
           <DiscAlbum className="h-4 w-4" />
           Ver álbum
         </DropdownMenuItem>

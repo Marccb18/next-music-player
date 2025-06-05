@@ -1,9 +1,9 @@
 'use server';
 
 import { connectMongo } from '@/lib/mongo';
+import { Playlists } from '@/lib/mongo/models/Playlists';
 import { Release } from '@/lib/mongo/models/Releases';
 import { Tracks } from '@/lib/mongo/models/Tracks';
-import { Playlists } from '@/lib/mongo/models/Playlists';
 
 export interface HomePageData {
   recentTracks: any[];
@@ -39,6 +39,6 @@ export async function getHomePageData(): Promise<HomePageData> {
   return {
     recentTracks: JSON.parse(JSON.stringify(recentTracks)),
     recentPlaylists: JSON.parse(JSON.stringify(recentPlaylists)),
-    popularAlbums: JSON.parse(JSON.stringify(popularAlbums))
+    popularAlbums: JSON.parse(JSON.stringify(popularAlbums)),
   };
-} 
+}

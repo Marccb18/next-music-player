@@ -1,13 +1,16 @@
-"use client"
-import { ChevronRight, Play } from "lucide-react"
-import { Button } from "@/components/primitives/button"
-import { ScrollArea, ScrollBar } from "@/components/primitives/scroll-area"
-import { Skeleton } from "@/components/primitives/skeleton"
-import { Artist } from "@/lib/types/music"
+'use client';
+
+import { ChevronRight, Play } from 'lucide-react';
+
+import { Button } from '@/components/primitives/button';
+import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
+import { Skeleton } from '@/components/primitives/skeleton';
+
+import { Artist } from '@/lib/types/music';
 
 interface RecentArtistsProps {
-  isLoading: boolean
-  artists: Artist[]
+  isLoading: boolean;
+  artists: Artist[];
 }
 
 export function RecentArtists({ isLoading, artists }: RecentArtistsProps) {
@@ -40,13 +43,16 @@ export function RecentArtists({ isLoading, artists }: RecentArtistsProps) {
                   <div className="relative mx-auto">
                     <div className="h-24 w-24 rounded-full overflow-hidden">
                       <img
-                        src={artist.images[0]?.url || "/placeholder.svg?height=96&width=96"}
+                        src={artist.images[0]?.url || '/placeholder.svg?height=96&width=96'}
                         alt={artist.name}
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                      <Button size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <Button
+                        size="icon"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      >
                         <Play className="h-5 w-5 ml-0.5" />
                       </Button>
                     </div>
@@ -63,5 +69,5 @@ export function RecentArtists({ isLoading, artists }: RecentArtistsProps) {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </section>
-  )
+  );
 }

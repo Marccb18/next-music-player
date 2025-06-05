@@ -2,6 +2,7 @@ import { Howl } from 'howler';
 import { create } from 'zustand';
 
 import { getTracks, getTracksByIds } from '@/lib/server-only/tracks/tracks.service';
+
 import { useRecentlyPlayedStore } from './recently-played-store';
 
 export interface Song {
@@ -305,7 +306,6 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
   toggleShuffle: () =>
     set((state) => {
       if (!state.isShuffled) {
-        const originalQueue = [...state.queue];
         const shuffledQueue = [...state.queue].sort(() => Math.random() - 0.5);
         return {
           queue: shuffledQueue,
@@ -320,30 +320,42 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
     }),
 
   reproduceAlbum: async (tracks: Song[] | string[]) => {
-    if (Array.isArray(tracks) && tracks.length > 0 && typeof tracks[0] === 'string') {
-      const loadedTracks = await getTracksByIds(tracks as string[]);
-      set({ queue: loadedTracks as Song[], shouldAutoPlay: true });
-      get().play(loadedTracks[0] as Song);
+    get().pause();
+    get().clearQueue();
+    if (Array.isArray(tracks) && tracks.length > 0) {
+      let loadedTracks: Song[];
+      
+      if (typeof tracks[0] === 'string') {
+        loadedTracks = await getTracksByIds(tracks as string[]);
+      } else {
+        // Si ya tenemos objetos Song, asegurémonos de que tengan todos los datos necesarios
+        const trackIds = (tracks as Song[]).map(track => track.id);
+        loadedTracks = await getTracksByIds(trackIds);
+      }
+      
+      set({ queue: loadedTracks, shouldAutoPlay: true });
+      get().play(loadedTracks[0]);
       return;
     }
-    set({ queue: tracks as Song[], shouldAutoPlay: true });
-    get().play(tracks[0] as Song);
   },
 
   reproduceShuffleAlbum: async (tracks: Song[] | string[]) => {
-    if (Array.isArray(tracks) && tracks.length > 0 && typeof tracks[0] === 'string') {
-      const loadedTracks = await getTracksByIds(tracks as string[]);
-      set({ queue: loadedTracks as Song[], shouldAutoPlay: true, isShuffled: true });
-      // Mezclar la cola antes de reproducir
+    if (Array.isArray(tracks) && tracks.length > 0) {
+      let loadedTracks: Song[];
+      
+      if (typeof tracks[0] === 'string') {
+        loadedTracks = await getTracksByIds(tracks as string[]);
+      } else {
+        const trackIds = (tracks as Song[]).map(track => track.id);
+        loadedTracks = await getTracksByIds(trackIds);
+      }
+      
+      set({ queue: loadedTracks, shouldAutoPlay: true});
       get().toggleShuffle();
-      get().play(loadedTracks[0] as Song);
+      const queue = get().queue;
+      get().play(queue[0]);
       return;
     }
-    set({ queue: tracks as Song[], shouldAutoPlay: true, isShuffled: true });
-    // Mezclar la cola antes de reproducir
-    get().toggleShuffle();
-    get().toggleShuffle();
-    get().play(get().queue[0] as Song);
   },
 
   seek: (time) => {

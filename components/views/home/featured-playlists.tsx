@@ -1,15 +1,19 @@
-"use client"
-import { ChevronRight, Play, Music } from "lucide-react"
-import { Button } from "@/components/primitives/button"
-import { ScrollArea, ScrollBar } from "@/components/primitives/scroll-area"
-import { Skeleton } from "@/components/primitives/skeleton"
-import type { Playlist } from "@/lib/types/playlist"
-import { PlaylistCard } from "@/components/views/playlist-views/playlist-card"
-import Link from "next/link"
+'use client';
+
+import { ChevronRight, Music, Play } from 'lucide-react';
+
+import Link from 'next/link';
+
+import { Button } from '@/components/primitives/button';
+import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
+import { Skeleton } from '@/components/primitives/skeleton';
+import { PlaylistCard } from '@/components/views/playlist-views/playlist-card';
+
+import type { Playlist } from '@/lib/types/playlist';
 
 interface FeaturedPlaylistsProps {
-  isLoading: boolean
-  playlists: Playlist[]
+  isLoading: boolean;
+  playlists: Playlist[];
 }
 
 export function FeaturedPlaylists({ isLoading, playlists }: FeaturedPlaylistsProps) {
@@ -37,16 +41,12 @@ export function FeaturedPlaylists({ isLoading, playlists }: FeaturedPlaylistsPro
               ))
             : playlists.map((playlist) => (
                 <div key={playlist.id}>
-                  <PlaylistCard
-                    playlist={playlist}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
-                  />
+                  <PlaylistCard playlist={playlist} onEdit={() => {}} onDelete={() => {}} />
                 </div>
               ))}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </section>
-  )
+  );
 }

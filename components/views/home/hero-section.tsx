@@ -1,18 +1,21 @@
-"use client"
-import { Play, Calendar } from "lucide-react"
-import { Button } from "@/components/primitives/button"
-import { Skeleton } from "@/components/primitives/skeleton"
-import { Badge } from "@/components/primitives/badge"
-import { useFormat } from "@/hooks/use-format"
-import type { Album } from "@/lib/types/music"
+'use client';
+
+import { useFormat } from '@/hooks/use-format';
+import { Calendar, Play } from 'lucide-react';
+
+import { Badge } from '@/components/primitives/badge';
+import { Button } from '@/components/primitives/button';
+import { Skeleton } from '@/components/primitives/skeleton';
+
+import type { Album } from '@/lib/types/music';
 
 interface HeroSectionProps {
-  isLoading: boolean
-  featured: Album | null
+  isLoading: boolean;
+  featured: Album | null;
 }
 
 export function HeroSection({ isLoading, featured }: HeroSectionProps) {
-  const { formatDate } = useFormat()
+  const { formatDate } = useFormat();
 
   if (isLoading) {
     return (
@@ -34,11 +37,11 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!featured) {
-    return null
+    return null;
   }
 
   return (
@@ -46,7 +49,7 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
       {/* Imagen de fondo */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
         <img
-          src={featured.cover || "/placeholder.svg?height=800&width=1600"}
+          src={featured.cover || '/placeholder.svg?height=800&width=1600'}
           alt={featured.name}
           className="w-full h-full object-cover object-center"
         />
@@ -60,7 +63,7 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
       <div className="absolute bottom-0 left-0 p-6 w-full">
         <div className="flex flex-col md:flex-row md:items-end gap-6 max-w-7xl mx-auto">
           <img
-            src={featured.cover || "/placeholder.svg?height=200&width=200"}
+            src={featured.cover || '/placeholder.svg?height=200&width=200'}
             alt={featured.name}
             className="w-48 h-48 rounded-lg shadow-xl object-cover"
           />
@@ -82,7 +85,11 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
                 <Play className="h-5 w-5 ml-0.5" />
                 Reproducir
               </Button>
-              <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+              >
                 Ver álbum
               </Button>
             </div>
@@ -90,5 +97,5 @@ export function HeroSection({ isLoading, featured }: HeroSectionProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

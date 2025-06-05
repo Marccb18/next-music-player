@@ -22,12 +22,6 @@ interface AudioPlayerProps {
   className?: string;
 }
 
-function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
-
 export function AudioPlayer({ className }: AudioPlayerProps) {
   const {
     currentSong,
@@ -75,6 +69,10 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
     }
   };
 
+  useEffect(() => {
+    console.log('currentSong', currentSong);
+  }, [currentSong]);
+
   return (
     <div
       className={cn(
@@ -118,8 +116,7 @@ export function AudioPlayer({ className }: AudioPlayerProps) {
         <QueueSheet />
         <PlayerOptions
           currentSong={currentSong}
-          playlists={playlists}
-          onAddToPlaylist={handleAddToPlaylist}
+          onAddToPlaylist={() => setIsAddToPlaylistOpen(true)}
           isAddToPlaylistOpen={isAddToPlaylistOpen}
           setIsAddToPlaylistOpen={setIsAddToPlaylistOpen}
         />

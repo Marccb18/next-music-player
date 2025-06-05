@@ -46,8 +46,7 @@ export function PlaylistDetailView({
   onDelete,
 }: PlaylistDetailViewProps) {
   const [searchQuery, setSearchQuery] = React.useState('');
-  const { reproduceAlbum, reproduceShuffleAlbum, queue, play, pause, isPlaying } = useAudioPlayer();
-  const router = useRouter();
+  const { reproduceAlbum, reproduceShuffleAlbum, pause, isPlaying } = useAudioPlayer()
   const { playlists, removeSongFromPlaylist, addSongToPlaylist } = usePlaylistsStore();
   const [isAddToPlaylistOpen, setIsAddToPlaylistOpen] = React.useState(false);
   const [selectedTrack, setSelectedTrack] = React.useState<Track | null>(null);

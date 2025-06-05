@@ -97,12 +97,16 @@ export const getPlaylistDetails = async (playlistId: string) => {
   const playlist = await Playlists.findById(playlistId)
     .populate({
       path: 'songs.track',
-    })
-    .populate({
-      path: 'songs.track.album',
-    })
-    .populate({
-      path: 'songs.track.artists',
+      populate: [
+        {
+          path: 'album',
+          select: 'name id'
+        },
+        {
+          path: 'artists',
+          select: 'name id'
+        }
+      ]
     });
   return JSON.parse(JSON.stringify(playlist));
 };

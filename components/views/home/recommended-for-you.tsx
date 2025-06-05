@@ -1,13 +1,16 @@
-"use client"
-import { ChevronRight, Play } from "lucide-react"
-import { Button } from "@/components/primitives/button"
-import { ScrollArea, ScrollBar } from "@/components/primitives/scroll-area"
-import { Skeleton } from "@/components/primitives/skeleton"
-import { Album } from "@/lib/types/music"
+'use client';
+
+import { ChevronRight, Play } from 'lucide-react';
+
+import { Button } from '@/components/primitives/button';
+import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
+import { Skeleton } from '@/components/primitives/skeleton';
+
+import { Album } from '@/lib/types/music';
 
 interface RecommendedForYouProps {
-  isLoading: boolean
-  albums: Album[]
+  isLoading: boolean;
+  albums: Album[];
 }
 
 export function RecommendedForYou({ isLoading, albums }: RecommendedForYouProps) {
@@ -37,12 +40,15 @@ export function RecommendedForYou({ isLoading, albums }: RecommendedForYouProps)
                 <div key={album.id} className="w-[160px] shrink-0 space-y-3 group">
                   <div className="relative aspect-square overflow-hidden rounded-md">
                     <img
-                      src={album.cover || "/placeholder.svg?height=160&width=160"}
+                      src={album.cover || '/placeholder.svg?height=160&width=160'}
                       alt={album.name}
                       className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                      <Button size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <Button
+                        size="icon"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      >
                         <Play className="h-5 w-5 ml-0.5" />
                       </Button>
                     </div>
@@ -50,7 +56,7 @@ export function RecommendedForYou({ isLoading, albums }: RecommendedForYouProps)
                   <div>
                     <h3 className="font-medium truncate">{album.name}</h3>
                     <p className="text-sm text-muted-foreground truncate">
-                      {album.artists.map(artist => artist.name).join(', ')}
+                      {album.artists.map((artist) => artist.name).join(', ')}
                     </p>
                   </div>
                 </div>
@@ -59,5 +65,5 @@ export function RecommendedForYou({ isLoading, albums }: RecommendedForYouProps)
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </section>
-  )
+  );
 }
