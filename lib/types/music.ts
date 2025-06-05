@@ -43,3 +43,17 @@ export type Release = {
   type?: string;
   tracks: string[] | Track[];
 };
+
+export type Artist = {
+  id: string;
+  name: string;
+  spotifyId: string;
+  images: Array<{
+    url: string;
+    height: number;
+    width: number;
+  }>;
+  genres: string[];
+  popularity: number;
+  type: 'artist' | 'group';
+};

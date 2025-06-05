@@ -2,6 +2,7 @@ import { Howl } from 'howler';
 import { create } from 'zustand';
 
 import { getTracks, getTracksByIds } from '@/lib/server-only/tracks/tracks.service';
+import { useRecentlyPlayedStore } from './recently-played-store';
 
 export interface Song {
   id: string;
@@ -99,6 +100,9 @@ const useAudioPlayer = create<AudioPlayerState & AudioPlayerActions>((set, get) 
     }
 
     if (song) {
+      // Añadir la canción al historial de reproducidas recientemente
+      useRecentlyPlayedStore.getState().addTrack(song);
+
       // Detener la reproducción actual si existe
       if (state.howl) {
         state.howl.stop();

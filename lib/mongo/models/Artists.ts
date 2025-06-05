@@ -79,7 +79,6 @@ const artistSchema = new mongoose.Schema(
 );
 
 artistSchema.index({ name: 'text' });
-artistSchema.index({ spotifyId: 1 }, { unique: true });
 
 artistSchema.plugin(toJSON);
 

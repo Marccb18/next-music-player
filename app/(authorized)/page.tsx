@@ -3,6 +3,13 @@ import { redirect } from 'next/navigation';
 
 import { connectMongo } from '@/lib/mongo';
 import { User } from '@/lib/mongo/models/Users';
+import { getHomePageData } from '@/lib/server-only/home/home.service';
+
+import { RecentReleases } from '@/components/views/home/recent-releases';
+import { RecentArtists } from '@/components/views/home/recent-artists';
+import { RecentlyPlayed } from '@/components/views/home/recently-played';
+import { FeaturedPlaylists } from '@/components/views/home/featured-playlists';
+import { RecommendedForYou } from '@/components/views/home/recommended-for-you';
 
 export default async function HomePage() {
   const userCookie = cookies().get('user_id');
@@ -18,5 +25,26 @@ export default async function HomePage() {
     redirect('/login');
   }
 
-  return <div className="bg-white shadow rounded-lg p-6"></div>;
+  const { recentTracks, recentPlaylists, popularAlbums } = await getHomePageData(user._id);
+
+  return (
+    <div className="flex-1 pb-8">
+      <div className="px-6 space-y-10">
+        {/* Lanzamientos recientemente añadidos */}
+        <RecentReleases isLoading={false} releases={popularAlbums} />
+
+        {/* Artistas recientemente añadidos */}
+        <RecentArtists isLoading={false} artists={[]} />
+
+        {/* Escuchados recientemente */}
+        <RecentlyPlayed isLoading={false} tracks={recentTracks} />
+
+        {/* Playlists destacadas */}
+        <FeaturedPlaylists isLoading={false} playlists={recentPlaylists} />
+
+        {/* Recomendados para ti */}
+        <RecommendedForYou isLoading={false} albums={popularAlbums} />
+      </div>
+    </div>
+  );
 }

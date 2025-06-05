@@ -1,136 +1,73 @@
 'use client';
 
-import { useFormat } from '@/hooks/use-format';
-import { Clock, Heart, MoreHorizontal, Play } from 'lucide-react';
-import { Library } from 'lucide-react';
-
 import * as React from 'react';
+import { Clock, Heart, MoreHorizontal, Play } from 'lucide-react';
 
-import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
 import { Button } from '@/components/primitives/button';
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from '@/components/primitives/context-menu';
-
-import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
-import type { Track } from '@/lib/types/music';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/primitives/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useFormat } from '@/hooks/use-format';
 
 interface TrackListProps {
-  tracks: Track[];
+  tracks: any[];
 }
 
 export function TrackList({ tracks }: TrackListProps) {
   const { formatTime } = useFormat();
   const [hoveredTrack, setHoveredTrack] = React.useState<string | null>(null);
   const [likedTracks, setLikedTracks] = React.useState<Record<string, boolean>>(
-    tracks.reduce((acc, track) => ({ ...acc, [track.id]: false }), {})
+    tracks.reduce((acc, track) => ({ ...acc, [track._id]: false }), {})
   );
-  const [selectedTrack, setSelectedTrack] = React.useState<Track | null>(null);
+  const [selectedTrack, setSelectedTrack] = React.useState<any | null>(null);
   const [isAddToPlaylistOpen, setIsAddToPlaylistOpen] = React.useState(false);
-  const { playlists, addSongToPlaylist } = usePlaylistsStore();
 
-  const handleLikeToggle = (trackId: string, e: React.MouseEvent) => {
+  const toggleLike = (e: React.MouseEvent, trackId: string) => {
     e.stopPropagation();
-    setLikedTracks((prev) => ({
-      ...prev,
-      [trackId]: !prev[trackId],
-    }));
-  };
-
-  const handleAddToPlaylist = (playlistId: string) => {
-    if (selectedTrack) {
-      addSongToPlaylist(playlists.find((p) => p.id === playlistId)!, selectedTrack.id);
-      setIsAddToPlaylistOpen(false);
-    }
+    setLikedTracks((prev) => ({ ...prev, [trackId]: !prev[trackId] }));
   };
 
   return (
-    <div className="space-y-1">
-      {/* Header de la tabla */}
-      <div className="grid grid-cols-[auto_1fr_auto_auto] gap-4 px-4 py-2 text-sm text-muted-foreground border-b">
-        <div className="w-6">#</div>
-        <div>Título</div>
-        <div className="w-6"></div>
-        <div className="w-12 text-right">
-          <Clock className="h-4 w-4 ml-auto" />
-        </div>
-      </div>
-
-      {/* Lista de canciones */}
+    <div className="space-y-1 p-2">
       {tracks.map((track) => (
-        <ContextMenu key={track.id}>
-          <ContextMenuTrigger>
-            <div
-              className="group grid grid-cols-[auto_1fr_auto_auto] gap-4 px-4 py-2 rounded-md hover:bg-muted/50 cursor-pointer"
-              onMouseEnter={() => setHoveredTrack(track.id)}
-              onMouseLeave={() => setHoveredTrack(null)}
-            >
-              <div className="w-6 flex items-center justify-center text-sm text-muted-foreground">
-                {hoveredTrack === track.id ? (
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    <Play className="h-3 w-3" />
-                  </Button>
-                ) : (
-                  track.trackNumber
-                )}
-              </div>
-
-              <div className="flex items-center min-w-0">
-                <div className="min-w-0">
-                  <p className="font-medium truncate">{track.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {track.artists.map((artist) => artist.name).join(', ')}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    'h-6 w-6 p-0',
-                    likedTracks[track.id] ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                  )}
-                  onClick={(e) => handleLikeToggle(track.id, e)}
-                >
-                  <Heart
-                    className={cn('h-4 w-4', likedTracks[track.id] && 'fill-red-500 text-red-500')}
-                  />
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-end">
-                <span className="text-sm text-muted-foreground tabular-nums">
-                  {formatTime(track.duration)}
-                </span>
-              </div>
+        <div
+          key={track._id}
+          className={cn(
+            'flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 group transition-colors',
+            hoveredTrack === track._id && 'bg-muted/50'
+          )}
+          onMouseEnter={() => setHoveredTrack(track._id)}
+          onMouseLeave={() => setHoveredTrack(null)}
+        >
+          <div className="relative h-10 w-10 rounded overflow-hidden">
+            <img
+              src={track.album?.cover || "/placeholder.svg?height=40&width=40"}
+              alt={track.name}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Play className="h-4 w-4 ml-0.5" />
+              </Button>
             </div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            <ContextMenuItem
-              onClick={() => {
-                setSelectedTrack(track);
-                setIsAddToPlaylistOpen(true);
-              }}
-            >
-              <Library className="h-4 w-4 mr-2" />
-              Añadir a playlist
-            </ContextMenuItem>
-          </ContextMenuContent>
-        </ContextMenu>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-medium truncate">{track.name}</h3>
+            <p className="text-sm text-muted-foreground truncate">
+              {track.artists.map((artist: any) => artist.name).join(', ')}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{formatTime(track.duration)}</span>
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={(e) => toggleLike(e, track._id)}>
+              <Heart className={cn("h-4 w-4", likedTracks[track._id] && "fill-red-500 text-red-500")} />
+            </Button>
+          </div>
+        </div>
       ))}
-
-      <AddToPlaylistDrawer
-        open={isAddToPlaylistOpen}
-        onOpenChange={setIsAddToPlaylistOpen}
-        playlists={playlists}
-        onAddToPlaylist={handleAddToPlaylist}
-      />
     </div>
   );
 }
