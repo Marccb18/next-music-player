@@ -56,7 +56,6 @@ export function LoginForm() {
         return;
       }
 
-      // Actualizamos el store con los datos del usuario
       setUser(result.user);
 
       router.refresh();
