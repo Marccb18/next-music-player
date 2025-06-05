@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormat } from '@/hooks/use-format';
+import { useFormat } from '@/hooks/useFormat';
 import { ChevronRight, Play } from 'lucide-react';
 
 import { Button } from '@/components/primitives/button';

@@ -7,7 +7,7 @@ import { RecentReleases } from '@/components/views/home/recent-releases';
 import { RecentlyPlayed } from '@/components/views/home/recently-played';
 import { RecommendedForYou } from '@/components/views/home/recommended-for-you';
 
-import { useHomeData } from '@/lib/client-only/hooks/use-home-data';
+import { useHomeData } from '@/hooks/useHomeData';
 
 export function HomePage() {
   const { isLoading, data } = useHomeData();

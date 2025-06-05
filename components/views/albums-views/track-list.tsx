@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormat } from '@/hooks/use-format';
+import { useFormat } from '@/hooks/useFormat';
 import { Heart, ListPlus, MoreHorizontal, Play, Plus } from 'lucide-react';
 
 import * as React from 'react';

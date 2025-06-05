@@ -3,7 +3,7 @@ import { create } from 'zustand';
 
 import { getTracks, getTracksByIds } from '@/lib/server-only/tracks/tracks.service';
 
-import { useRecentlyPlayedStore } from './recently-played-store';
+import { useRecentlyPlayedStore } from './recentlyPlayedStore';
 
 export interface Song {
   id: string;

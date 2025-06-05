@@ -1,8 +1,5 @@
-import { Document } from 'mongoose';
 
-import { Artists } from '@/lib/mongo/models/Artists';
 import { Release } from '@/lib/mongo/models/Releases';
-import { Tracks } from '@/lib/mongo/models/Tracks';
 
 export type Track = {
   id: string;

@@ -1,4 +1,4 @@
-import { useFormat } from '@/hooks/use-format';
+import { useFormat } from '@/hooks/useFormat';
 import { ArrowLeft } from 'lucide-react';
 
 import { Badge } from '@/components/primitives/badge';

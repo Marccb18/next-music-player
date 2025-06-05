@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useRecentlyPlayedStore } from '@/lib/client-only/stores/recently-played-store';
+import { useRecentlyPlayedStore } from '@/lib/client-only/stores/recentlyPlayedStore';
 import { getHomePageData } from '@/lib/server-only/home/home.service';
 import type { Album, Artist, Track } from '@/lib/types/music';
 import type { Playlist } from '@/lib/types/playlist';

@@ -1,4 +1,4 @@
-import { useFormat } from '@/hooks/use-format';
+import { useFormat } from '@/hooks/useFormat';
 import { Clock, Music, Plus, Search } from 'lucide-react';
 
 import { Button } from '@/components/primitives/button';

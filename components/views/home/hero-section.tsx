@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormat } from '@/hooks/use-format';
+import { useFormat } from '@/hooks/useFormat';
 import { Calendar, Play } from 'lucide-react';
 
 import { Badge } from '@/components/primitives/badge';
