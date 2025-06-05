@@ -42,6 +42,7 @@ export default function PlaylistDetailPage() {
               album: {
                 name: song.track?.album?.name,
                 cover: song.track?.album?.cover,
+                id: song.track?.album?.id,
               },
               artists: song.track?.artists?.map((a: any) => ({ name: a.name })),
             })) || [],

@@ -43,23 +43,23 @@ const navigationItems = [
   },
 ];
 
-const libraryItems = [
-  {
-    title: 'Canciones que te gustan',
-    url: '#',
-    icon: Heart,
-  },
-  {
-    title: 'Artistas',
-    url: '#',
-    icon: Mic2,
-  },
-  {
-    title: 'Álbumes',
-    url: '#',
-    icon: Music,
-  },
-];
+// const libraryItems = [
+//   {
+//     title: 'Canciones que te gustan',
+//     url: '#',
+//     icon: Heart,
+//   },
+//   {
+//     title: 'Artistas',
+//     url: '#',
+//     icon: Mic2,
+//   },
+//   {
+//     title: 'Álbumes',
+//     url: '#',
+//     icon: Music,
+//   },
+// ];
 
 export function AppSidebar() {
   const { user } = useAuth();
@@ -122,7 +122,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
+        {/* <SidebarGroup>
           <SidebarGroupLabel>Tu Biblioteca</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -138,7 +138,7 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
 
         <SidebarGroup>
           <SidebarGroupLabel>

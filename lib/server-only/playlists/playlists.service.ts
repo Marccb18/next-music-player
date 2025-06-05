@@ -8,6 +8,10 @@ export const getPlaylists = async (userId: string) => {
   const playlists = await Playlists.find({ owner: userId }).populate({
     path: 'songs.track',
     model: 'Tracks',
+    populate: [
+      { path: 'album', model: 'Release' },
+      { path: 'artists', model: 'Artists' },
+    ],
   });
   return JSON.parse(JSON.stringify(playlists));
 };

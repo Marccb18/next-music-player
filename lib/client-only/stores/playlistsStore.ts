@@ -6,9 +6,11 @@ import {
   deletePlaylist as deletePlaylistServer,
   getPlaylists,
   updatePlaylist as updatePlaylistServer,
+  removeSongFromPlaylist as removeSongFromPlaylistServer,
 } from '@/lib/server-only/playlists/playlists.service';
 
 import { useUserStore } from './userStore';
+import { Track } from '@/lib/types/music';
 
 type Playlist = {
   id: string;
@@ -19,7 +21,7 @@ type Playlist = {
   totalDuration: number;
   totalSongs: number;
   songs?: Array<{
-    track: string;
+    track: Track;
     position: number;
     addedAt: Date;
   }>;
@@ -92,21 +94,31 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
     const userId = useUserStore.getState().user?._id;
     if (!userId) return;
 
-    set((state) => ({
-      playlists: state.playlists.map((p) => {
-        if (p.id === playlist.id) {
-          const updatedSongs = p.songs?.filter((s) => s.track !== trackId) || [];
-          return {
-            ...p,
-            songs: updatedSongs,
-            totalSongs: updatedSongs.length,
-          };
-        }
-        return p;
-      }),
-    }));
+    try {
+      const updatedPlaylist = await removeSongFromPlaylistServer(userId, playlist.id, trackId);
+      if (!updatedPlaylist) {
+        throw new Error('No se pudo eliminar la canción de la playlist');
+      }
 
-    // TODO: Implementar actualización en servidor
+      set((state) => ({
+        playlists: state.playlists.map((p) => {
+          if (p.id === playlist.id) {
+            return {
+              ...p,
+              songs: updatedPlaylist.songs,
+              totalSongs: updatedPlaylist.totalSongs,
+            };
+          }
+          return p;
+        }),
+      }));
+
+      console.log('Canción eliminada exitosamente de la playlist');
+    } catch (error) {
+      console.error('Error al eliminar canción de la playlist:', error);
+      // Recargar playlists del servidor para revertir cambios
+      get().loadPlaylists();
+    }
   },
 
   createPlaylist: async (playlist) => {
@@ -114,27 +126,23 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
     if (!userId) return;
 
     try {
-      // Llama al backend para crear la playlist y espera la respuesta
       const createdPlaylist = await createPlaylistServer(
         userId,
         playlist.name,
         playlist.description
       );
 
-      // Añade la playlist devuelta por el backend al estado local
       set((state) => ({
         playlists: [
           ...state.playlists,
           {
             ...createdPlaylist,
-            // Si el backend devuelve _id, pero tu frontend espera id:
             id: createdPlaylist.id || createdPlaylist._id,
           },
         ],
       }));
     } catch (error) {
       console.error('Error creating playlist:', error);
-      // Aquí podrías mostrar un mensaje de error si quieres
     }
   },
 
@@ -150,7 +158,6 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
       await updatePlaylistServer(userId, playlist.id, playlist.name, playlist.description);
     } catch (error) {
       console.error('Error updating playlist:', error);
-      // Recargar playlists del servidor para revertir cambios
       get().loadPlaylists();
     }
   },
@@ -167,7 +174,6 @@ export const usePlaylistsStore = create<PlaylistsState>()((set, get) => ({
       await deletePlaylistServer(userId, playlistId);
     } catch (error) {
       console.error('Error deleting playlist:', error);
-      // Recargar playlists del servidor para revertir cambios
       get().loadPlaylists();
     }
   },

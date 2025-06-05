@@ -1,11 +1,14 @@
 'use client';
 
+import { useFormat } from '@/hooks/use-format';
 import {
   ArrowLeft,
   Clock,
   Edit3,
   Heart,
+  Library,
   MoreHorizontal,
+  Music,
   Pause,
   Play,
   Plus,
@@ -17,8 +20,18 @@ import {
 
 import * as React from 'react';
 
+import { useRouter } from 'next/navigation';
+
+import { AddToPlaylistDrawer } from '@/components/drawers/add-to-playlist';
 import { Badge } from '@/components/primitives/badge';
 import { Button } from '@/components/primitives/button';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/primitives/context-menu';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,9 +40,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/primitives/dropdown-menu';
 
-import { cn } from '@/lib/utils';
-import { useFormat } from '@/hooks/use-format';
 import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
+import { usePlaylistsStore } from '@/lib/client-only/stores/playlistsStore';
 import { Track } from '@/lib/types/music';
 
 interface Playlist {
@@ -45,6 +57,9 @@ interface Playlist {
   updatedAt: Date;
   tracks: Track[];
   isOwner: boolean;
+  covers: string[];
+  totalDuration: number;
+  totalSongs: number;
 }
 
 interface PlaylistDetailViewProps {
@@ -63,6 +78,11 @@ export function PlaylistDetailView({
   const [searchQuery, setSearchQuery] = React.useState('');
   const { formatTime, formatDuration, formatDate } = useFormat();
   const { reproduceAlbum, reproduceShuffleAlbum, queue, play, pause, isPlaying } = useAudioPlayer();
+  const router = useRouter();
+  const { playlists, removeSongFromPlaylist, addSongToPlaylist } = usePlaylistsStore();
+  const [isAddToPlaylistOpen, setIsAddToPlaylistOpen] = React.useState(false);
+  const [selectedTrack, setSelectedTrack] = React.useState<Track | null>(null);
+
   const filteredTracks = playlist.tracks.filter((track) => {
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -78,6 +98,13 @@ export function PlaylistDetailView({
   });
 
   const totalDuration = playlist.tracks.reduce((acc, track) => acc + track.duration, 0);
+
+  const handleAddToPlaylist = (playlistId: string) => {
+    if (selectedTrack) {
+      addSongToPlaylist(playlists.find(p => p.id === playlistId)!, selectedTrack.id);
+      setIsAddToPlaylistOpen(false);
+    }
+  };
 
   return (
     <div className="flex-1">
@@ -100,8 +127,7 @@ export function PlaylistDetailView({
               ) : (
                 <div
                   className="w-48 h-48 rounded-lg shadow-xl flex items-center justify-center"
-                  style={playlist.coverStyle}
-                >
+                  style={playlist.coverStyle}>
                   <div className="text-6xl font-bold text-primary/50">
                     {playlist.name.charAt(0).toUpperCase()}
                   </div>
@@ -143,16 +169,14 @@ export function PlaylistDetailView({
                   reproduceAlbum(playlist.tracks);
                 }
               }}
-              disabled={playlist.tracks.length === 0}
-            >
+              disabled={playlist.tracks.length === 0}>
               {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
             </Button>
             <Button
               variant="outline"
               size="lg"
               className="gap-2"
-              disabled={playlist.tracks.length === 0}
-            >
+              disabled={playlist.tracks.length === 0}>
               <Shuffle className="h-4 w-4" />
               Aleatorio
             </Button>
@@ -179,8 +203,7 @@ export function PlaylistDetailView({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={onDelete}
-                  className="text-destructive focus:text-destructive"
-                >
+                  className="text-destructive focus:text-destructive">
                   <Trash2 className="h-4 w-4 mr-2" />
                   Eliminar playlist
                 </DropdownMenuItem>
@@ -232,47 +255,88 @@ export function PlaylistDetailView({
 
             {/* Lista de canciones */}
             {filteredTracks.map((track, index) => (
-              <div
-                key={track.id}
-                className="group grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 px-4 py-2 rounded-md hover:bg-muted/50 cursor-pointer"
-              >
-                <div className="w-6 flex items-center justify-center text-sm text-muted-foreground group-hover:hidden">
-                  {index + 1}
-                </div>
-                <div className="w-6 hidden group-hover:flex items-center justify-center">
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    <Play className="h-3 w-3" />
-                  </Button>
-                </div>
+              <ContextMenu key={track.id}>
+                <ContextMenuTrigger>
+                  <div className="group grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 px-4 py-2 rounded-md hover:bg-muted/50 cursor-pointer">
+                    <div className="w-6 flex items-center justify-center text-sm text-muted-foreground group-hover:hidden">
+                      {index + 1}
+                    </div>
+                    <div className="w-6 hidden group-hover:flex items-center justify-center">
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                        <Play className="h-3 w-3" />
+                      </Button>
+                    </div>
 
-                <div className="flex items-center gap-3 min-w-0">
-                  <img
-                    src={track.image || '/placeholder.svg'}
-                    alt={track.name}
-                    className="w-10 h-10 rounded object-cover"
-                  />
-                  <div className="min-w-0">
-                    <p className="font-medium truncate">{track.name}</p>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {track.artists?.map((a) => a.name).join(', ')}
-                    </p>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={track.image || '/placeholder.svg'}
+                        alt={track.name}
+                        className="w-10 h-10 rounded object-cover"
+                      />
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{track.name}</p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {track.artists?.map((a) => a.name).join(', ')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center">
+                      <p className="text-sm text-muted-foreground truncate">{track.album?.name}</p>
+                    </div>
+
+                    <div className="flex items-center justify-end">
+                      <span className="text-sm text-muted-foreground tabular-nums">
+                        {formatTime(track.duration)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex items-center">
-                  <p className="text-sm text-muted-foreground truncate">{track.album?.name}</p>
-                </div>
-
-                <div className="flex items-center justify-end">
-                  <span className="text-sm text-muted-foreground tabular-nums">
-                    {formatTime(track.duration)}
-                  </span>
-                </div>
-              </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  <ContextMenuItem
+                    onClick={() => {
+                      console.log(track)
+                      if (track.album?.id) {
+                        router.push(`/albums/${track.album.id}`);
+                      }
+                    }}>
+                    <Music className="h-4 w-4 mr-2" />
+                    Ver álbum
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    onClick={() => {
+                      setSelectedTrack(track);
+                      setIsAddToPlaylistOpen(true);
+                    }}>
+                    <Library className="h-4 w-4 mr-2" />
+                    Añadir a playlist
+                  </ContextMenuItem>
+                  {playlist.isOwner && (
+                    <>
+                      <ContextMenuSeparator />
+                      <ContextMenuItem
+                        onClick={() => {
+                          removeSongFromPlaylist(playlists.find(p => p.id === playlist.id)!, track.id);
+                        }}
+                        className="text-destructive focus:text-destructive">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Eliminar de la playlist
+                      </ContextMenuItem>
+                    </>
+                  )}
+                </ContextMenuContent>
+              </ContextMenu>
             ))}
           </div>
         )}
       </div>
+
+      <AddToPlaylistDrawer
+        open={isAddToPlaylistOpen}
+        onOpenChange={setIsAddToPlaylistOpen}
+        playlists={playlists}
+        onAddToPlaylist={handleAddToPlaylist}
+      />
     </div>
   );
 }
