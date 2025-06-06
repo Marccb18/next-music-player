@@ -222,7 +222,7 @@ La integración con servicios externos es un aspecto fundamental de Next Music P
 La API de Spotify constituye una pieza central en la infraestructura de la aplicación, proporcionando acceso a un vasto catálogo musical y metadatos detallados. Esta integración permite ofrecer a los usuarios una experiencia rica en contenido, manteniendo la flexibilidad y personalización que caracteriza a la plataforma.
 
 ### Spotify Web API
-<img src="https://static.vecteezy.com/system/resources/previews/006/057/992/non_2x/spotify-logo-on-transparent-background-free-vector.jpg" alt="Next.js Logo" width="100" height="100" style="object-fit: contain; margin: 1rem 0;">
+<img src="https://imgs.search.brave.com/0pbAjdXdDiEUsNdxwrhnx8j4Ytj8My4DKFHWZfOwql4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/cG5nYWxsLmNvbS93/cC1jb250ZW50L3Vw/bG9hZHMvMTMvU3Bv/dGlmeS1Mb2dvLVBO/Ry1QaG90b3MucG5n" alt="Next.js Logo" width="100" height="100" style="object-fit: contain; margin: 1rem 0;">
 - Integración con el catálogo de música de Spotify
 - Búsqueda de álbumes y canciones
 - Obtención de metadatos detallados de música
@@ -566,7 +566,6 @@ El proyecto utiliza MongoDB como base de datos, con los siguientes modelos princ
 
 6. **Groups (Grupos)**
    - Contiene múltiples **Artists**
-```
 
 ### Índices y Optimizaciones
 
@@ -576,6 +575,29 @@ El proyecto utiliza MongoDB como base de datos, con los siguientes modelos princ
    - Índices en características de audio
    - Índice único en `spotifyId`
 
+2. **Artists**
+   - Índice de texto en `name`
+   - Índice en `popularity`
+   - Índice único en `spotifyId`
+
+3. **Releases**
+   - Índice de texto en `name`
+   - Índice en `releaseDate`
+   - Índice único en `spotifyId`
+
+4. **Playlists**
+   - Índice de texto en `name`
+   - Índice en `owner`
+   - Índice en `isPublic`
+
+5. **Genres**
+   - Índice de texto en `name`
+   - Índice único en `spotifyId`
+
+6. **Groups**
+   - Índice de texto en `name`
+   - Índice en `artists`
+
 ### Plugins y Middleware
 
 1. **toJSON**
@@ -584,12 +606,41 @@ El proyecto utiliza MongoDB como base de datos, con los siguientes modelos princ
    - Formateo de fechas
    - Eliminación de campos sensibles
 
+2. **timestamps**
+   - Plugin de Mongoose para timestamps
+   - Campos `createdAt` y `updatedAt` automáticos
+   - Formateo de fechas ISO
+
+3. **validation**
+   - Validación de esquemas
+   - Mensajes de error personalizados
+   - Validación de tipos
+   - Validación de referencias
+
 ### Mejores Prácticas Implementadas
 
 1. **Referencias**
    - Uso de `ObjectId` para relaciones
    - Populate automático cuando es necesario
    - Índices en campos de referencia
+
+2. **Validación**
+   - Validación de esquemas con Zod
+   - Validación de tipos con TypeScript
+   - Validación de datos en tiempo real
+   - Mensajes de error descriptivos
+
+3. **Seguridad**
+   - Sanitización de datos
+   - Protección contra inyección
+   - Validación de permisos
+   - Control de acceso basado en roles
+
+4. **Rendimiento**
+   - Índices optimizados
+   - Consultas eficientes
+   - Caching de resultados
+   - Paginación de resultados
 
 ### Características Adicionales
 
@@ -599,6 +650,20 @@ El proyecto utiliza MongoDB como base de datos, con los siguientes modelos princ
 - Posicionamiento personalizable
 - Animaciones suaves
 - Integración con acciones de usuario
+
+#### Sistema de Búsqueda
+- Búsqueda en tiempo real
+- Filtros avanzados
+- Búsqueda por texto completo
+- Resultados paginados
+- Caching de resultados
+
+#### Sistema de Caché
+- Caché en memoria
+- Caché distribuido
+- Invalidación automática
+- TTL configurable
+- Estrategias de fallback
 
 ## Conclusiones y Valoración
 
@@ -701,14 +766,34 @@ El proyecto sienta las bases para futuras mejoras y expansiones, demostrando la 
 ### Documentación Oficial
 - **Next.js**: [Documentación oficial de Next.js](https://nextjs.org/docs)
 - **React**: [Documentación oficial de React](https://react.dev/)
+- **TypeScript**: [Documentación oficial de TypeScript](https://www.typescriptlang.org/docs/)
+- **Tailwind CSS**: [Documentación oficial de Tailwind CSS](https://tailwindcss.com/docs)
+- **Shadcn/ui**: [Documentación oficial de Shadcn/ui](https://ui.shadcn.com/docs)
+- **Zustand**: [Documentación oficial de Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
+- **Howler.js**: [Documentación oficial de Howler.js](https://github.com/goldfire/howler.js#documentation)
+- **MongoDB**: [Documentación oficial de MongoDB](https://www.mongodb.com/docs/)
+- **Mongoose**: [Documentación oficial de Mongoose](https://mongoosejs.com/docs/)
+- **AWS S3**: [Documentación oficial de Amazon S3](https://docs.aws.amazon.com/s3/)
+- **Vercel**: [Documentación oficial de Vercel](https://vercel.com/docs)
+- **Spotify Web API**: [Documentación oficial de Spotify Web API](https://developer.spotify.com/documentation/web-api)
+- **React Hook Form**: [Documentación oficial de React Hook Form](https://react-hook-form.com/docs)
+- **Zod**: [Documentación oficial de Zod](https://zod.dev/)
+- **Node.js**: [Documentación oficial de Node.js](https://nodejs.org/docs)
 
 ### Herramientas de Desarrollo
 - **Cursor**: [Documentación oficial de Cursor](https://cursor.sh/docs)
 - **v0**: [Documentación oficial de v0](https://v0.dev/docs)
+- **Git**: [Documentación oficial de Git](https://git-scm.com/doc)
+- **GitHub**: [Documentación oficial de GitHub](https://docs.github.com/)
+- **npm**: [Documentación oficial de npm](https://docs.npmjs.com/)
+- **pnpm**: [Documentación oficial de pnpm](https://pnpm.io/docs)
 
 ### Recursos Adicionales
 - **GitHub**: [Repositorio del proyecto](https://github.com/your-username/next-music-player)
 - **Vercel**: [Documentación de despliegue](https://vercel.com/docs)
+- **MDN Web Docs**: [Documentación web de Mozilla](https://developer.mozilla.org/)
+- **Stack Overflow**: [Comunidad de desarrolladores](https://stackoverflow.com/)
+- **Dev.to**: [Comunidad de desarrollo](https://dev.to/)
 
 ---
 
