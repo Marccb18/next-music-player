@@ -75,12 +75,13 @@ export function TrackList({ tracks }: TrackListProps) {
             <ContextMenuTrigger>
               <div
                 className={cn(
-                  'flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 group transition-colors',
+                  'flex items-center justify-center gap-3 p-2 rounded-md hover:bg-muted/50 group transition-colors',
                   hoveredTrack === track.id && 'bg-muted/50'
                 )}
                 onMouseEnter={() => setHoveredTrack(track.id)}
                 onMouseLeave={() => setHoveredTrack(null)}
               >
+                
                 <div className="relative h-10 w-10 rounded overflow-hidden">
                   <img
                     src={track.image || '/placeholder.svg?height=40&width=40'}

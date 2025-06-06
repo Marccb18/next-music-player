@@ -1,12 +1,10 @@
 'use client';
 
-import { ChevronRight, Play } from 'lucide-react';
-
 import * as React from 'react';
 
-import { Button } from '@/components/primitives/button';
 import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
 import { Skeleton } from '@/components/primitives/skeleton';
+import { MusicCard } from '@/components/primitives/music-card';
 
 import type { Track } from '@/lib/types/music';
 
@@ -33,29 +31,11 @@ export function RecentlyPlayed({ isLoading, tracks }: RecentlyPlayedProps) {
                 </div>
               ))
             : tracks.map((track) => (
-                <div key={track.id} className="w-[160px] shrink-0 space-y-3 group">
-                  <div className="relative aspect-square overflow-hidden rounded-md">
-                    <img
-                      src={track.image || '/placeholder.svg?height=160&width=160'}
-                      alt={track.name}
-                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                      <Button
-                        size="icon"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      >
-                        <Play className="h-5 w-5 ml-0.5" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-medium truncate">{track.name}</h3>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {track.artists.map((artist) => artist.name).join(', ')}
-                    </p>
-                  </div>
-                </div>
+                <MusicCard
+                  key={track.id}
+                  item={track}
+                  type="track"
+                />
               ))}
         </div>
         <ScrollBar orientation="horizontal" />

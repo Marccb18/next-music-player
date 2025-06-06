@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { Button } from '@/components/primitives/button';
 import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
 import { Skeleton } from '@/components/primitives/skeleton';
-import { PlaylistCard } from '@/components/views/playlist-views/playlist-card';
 
 import type { Playlist } from '@/lib/types/playlist';
+import { PlaylistsGrid } from '../playlist-views/playlists-grid';
 
 interface FeaturedPlaylistsProps {
   isLoading: boolean;
@@ -39,11 +39,13 @@ export function FeaturedPlaylists({ isLoading, playlists }: FeaturedPlaylistsPro
                   <Skeleton className="h-3 w-1/2" />
                 </div>
               ))
-            : playlists.map((playlist) => (
-                <div key={playlist.id}>
-                  <PlaylistCard playlist={playlist} onEdit={() => {}} onDelete={() => {}} />
-                </div>
-              ))}
+            : (
+                <PlaylistsGrid
+                  playlists={playlists}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                />
+              )}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

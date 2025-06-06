@@ -71,14 +71,6 @@ export function AppSidebarFooter() {
                   <User />
                   Account
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <CreditCard />
-                  Billing
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell />
-                  Notifications
-                </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="!text-red-500 hover:!text-red-500">

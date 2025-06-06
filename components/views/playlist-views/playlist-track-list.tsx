@@ -68,7 +68,7 @@ export function PlaylistTrackList({
       {tracks.map((track, index) => (
         <div
           key={track.id}
-          className="grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 px-4 py-2 hover:bg-muted/50 rounded-lg group cursor-pointer"
+          className="grid grid-cols-[auto_1fr_1fr_auto_auto] gap-4 px-4 py-2 hover:bg-muted/50 rounded-lg group cursor-pointer items-center justify-center"
           onClick={() => onTrackClick(track)}
         >
           <div className="w-8 text-muted-foreground">{index + 1}</div>
