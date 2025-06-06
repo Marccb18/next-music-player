@@ -9,6 +9,7 @@ import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
 import { Skeleton } from '@/components/primitives/skeleton';
 
 import type { Playlist } from '@/lib/types/playlist';
+
 import { PlaylistsGrid } from '../playlist-views/playlists-grid';
 
 interface FeaturedPlaylistsProps {
@@ -31,21 +32,17 @@ export function FeaturedPlaylists({ isLoading, playlists }: FeaturedPlaylistsPro
 
       <ScrollArea className="w-full whitespace-nowrap pb-4">
         <div className="flex gap-4">
-          {isLoading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="w-[160px] shrink-0 space-y-3">
-                  <Skeleton className="aspect-square w-full rounded-md" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
-              ))
-            : (
-                <PlaylistsGrid
-                  playlists={playlists}
-                  onEdit={() => {}}
-                  onDelete={() => {}}
-                />
-              )}
+          {isLoading ? (
+            Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="w-[160px] shrink-0 space-y-3">
+                <Skeleton className="aspect-square w-full rounded-md" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            ))
+          ) : (
+            <PlaylistsGrid playlists={playlists} onEdit={() => {}} onDelete={() => {}} />
+          )}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

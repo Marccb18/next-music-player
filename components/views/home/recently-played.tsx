@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 
+import { MusicCard } from '@/components/primitives/music-card';
 import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
 import { Skeleton } from '@/components/primitives/skeleton';
-import { MusicCard } from '@/components/primitives/music-card';
 
 import type { Track } from '@/lib/types/music';
 
@@ -30,13 +30,7 @@ export function RecentlyPlayed({ isLoading, tracks }: RecentlyPlayedProps) {
                   <Skeleton className="h-3 w-1/2" />
                 </div>
               ))
-            : tracks.map((track) => (
-                <MusicCard
-                  key={track.id}
-                  item={track}
-                  type="track"
-                />
-              ))}
+            : tracks.map((track) => <MusicCard key={track.id} item={track} type="track" />)}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

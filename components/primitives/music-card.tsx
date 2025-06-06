@@ -1,5 +1,7 @@
 import { Play } from 'lucide-react';
+
 import { Button } from '@/components/primitives/button';
+
 import useAudioPlayer from '@/lib/client-only/stores/audioPlayerStore';
 import { Album, Track } from '@/lib/types/music';
 
@@ -56,10 +58,8 @@ export function MusicCard({ item, type }: MusicCardProps) {
       </div>
       <div>
         <h3 className="font-medium truncate">{getName()}</h3>
-        <p className="text-sm text-muted-foreground truncate">
-          {getArtists()}
-        </p>
+        <p className="text-sm text-muted-foreground truncate">{getArtists()}</p>
       </div>
     </div>
   );
-} 
+}

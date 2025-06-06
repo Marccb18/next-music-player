@@ -81,7 +81,6 @@ export function TrackList({ tracks }: TrackListProps) {
                 onMouseEnter={() => setHoveredTrack(track.id)}
                 onMouseLeave={() => setHoveredTrack(null)}
               >
-                
                 <div className="relative h-10 w-10 rounded overflow-hidden">
                   <img
                     src={track.image || '/placeholder.svg?height=40&width=40'}

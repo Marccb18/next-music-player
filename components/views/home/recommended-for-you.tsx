@@ -3,9 +3,9 @@
 import { ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/primitives/button';
+import { MusicCard } from '@/components/primitives/music-card';
 import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
 import { Skeleton } from '@/components/primitives/skeleton';
-import { MusicCard } from '@/components/primitives/music-card';
 
 import { Album } from '@/lib/types/music';
 
@@ -37,13 +37,7 @@ export function RecommendedForYou({ isLoading, albums }: RecommendedForYouProps)
                   <Skeleton className="h-3 w-1/2" />
                 </div>
               ))
-            : albums.map((album) => (
-                <MusicCard
-                  key={album.id}
-                  item={album}
-                  type="album"
-                />
-              ))}
+            : albums.map((album) => <MusicCard key={album.id} item={album} type="album" />)}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

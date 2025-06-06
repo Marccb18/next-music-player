@@ -4,9 +4,9 @@ import { useFormat } from '@/hooks/useFormat';
 import { ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/primitives/button';
+import { MusicCard } from '@/components/primitives/music-card';
 import { ScrollArea, ScrollBar } from '@/components/primitives/scroll-area';
 import { Skeleton } from '@/components/primitives/skeleton';
-import { MusicCard } from '@/components/primitives/music-card';
 
 import { Album } from '@/lib/types/music';
 
@@ -40,13 +40,7 @@ export function RecentReleases({ isLoading, releases }: RecentReleasesProps) {
                   <Skeleton className="h-3 w-1/2" />
                 </div>
               ))
-            : releases.map((release) => (
-                <MusicCard
-                  key={release.id}
-                  item={release}
-                  type="album"
-                />
-              ))}
+            : releases.map((release) => <MusicCard key={release.id} item={release} type="album" />)}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
