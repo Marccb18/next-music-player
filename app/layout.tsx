@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
+import { AlertDialog } from '@/components/alert-dialog';
 import { SidebarProvider } from '@/components/primitives/sidebar';
 
 import './globals.css';
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SidebarProvider>
           {children}
           <Toaster position="bottom-center" />
+          <AlertDialog />
         </SidebarProvider>
       </body>
     </html>
